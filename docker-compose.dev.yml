@@ -13,7 +13,7 @@ services:
     env_file: .env
     environment:
       - APP_ENV=development
-      - ALLOWED_ORIGINS=http://localhost,http://localhost:3000,http://localhost:80
+      - ALLOWED_ORIGINS=["http://localhost","http://localhost:3000","http://localhost:80"]
     volumes:
       - ./src/backend/app:/app/app            # Hot-reload: mount source
       - backend_uploads_dev:/app/uploads
