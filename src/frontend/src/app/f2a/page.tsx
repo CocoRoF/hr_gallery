@@ -15,6 +15,7 @@ import {
   ChevronDown,
   ChevronRight,
   Beaker,
+  ExternalLink,
 } from "lucide-react";
 import {
   analyzeFile,
@@ -311,7 +312,12 @@ export default function F2aPage() {
 
           {/* Results */}
           {response?.success && response.analysis && (
-            <AnalysisResults analysis={response.analysis} filename={response.filename} />
+            <AnalysisResults
+              analysis={response.analysis}
+              filename={response.filename}
+              analysisId={response.analysis_id}
+              htmlAvailable={response.html_available}
+            />
           )}
 
           {/* Empty State */}
@@ -335,9 +341,13 @@ export default function F2aPage() {
 function AnalysisResults({
   analysis,
   filename,
+  analysisId,
+  htmlAvailable,
 }: {
   analysis: AnalysisResult;
   filename: string;
+  analysisId: string | null;
+  htmlAvailable: boolean;
 }) {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
     new Set()
@@ -383,6 +393,19 @@ function AnalysisResults({
             icon={<Database size={14} />}
           />
         </div>
+
+        {htmlAvailable && analysisId && (
+          <button
+            onClick={() => {
+              const apiBase = process.env.NEXT_PUBLIC_API_URL || "/api";
+              window.open(`${apiBase}/f2a/report/${analysisId}`, "_blank");
+            }}
+            className="btn-f2a mt-4 w-full"
+          >
+            <ExternalLink size={16} />
+            HTML 리포트 보기
+          </button>
+        )}
       </div>
 
       {/* Schema */}

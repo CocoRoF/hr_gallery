@@ -142,6 +142,7 @@ export interface AnalysisResult {
 export interface AnalysisResponse {
   success: boolean;
   filename: string;
+  analysis_id: string | null;
   analysis: AnalysisResult | null;
   html_available: boolean;
   error: string | null;

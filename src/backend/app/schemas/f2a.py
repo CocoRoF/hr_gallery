@@ -52,6 +52,7 @@ class AnalysisResultSchema(BaseModel):
 class AnalysisResponse(BaseModel):
     success: bool
     filename: str
+    analysis_id: str | None = None
     analysis: AnalysisResultSchema | None = None
     html_available: bool = False
     error: str | None = None

@@ -195,6 +195,7 @@ async def analyze_file(
     return AnalysisResponse(
         success=True,
         filename=file.filename or "unknown",
+        analysis_id=analysis_id,
         analysis=analysis_result,
         html_available=html_path is not None,
     )
@@ -318,6 +319,7 @@ async def analyze_sample(
     return AnalysisResponse(
         success=True,
         filename=f"{dataset_id}.csv",
+        analysis_id=analysis_id,
         analysis=analysis_result,
         html_available=html_path is not None,
     )
