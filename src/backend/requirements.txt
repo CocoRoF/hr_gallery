@@ -6,7 +6,7 @@ pydantic==2.11.*
 pydantic-settings==2.9.*
 
 # ─── Libraries ───
-googer==0.2.7
+googer==0.2.8
 f2a==1.0.3
 
 # ─── f2a optional deps ───
