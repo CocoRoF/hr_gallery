@@ -1,5 +1,6 @@
 """Application settings via environment variables."""
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -25,7 +26,18 @@ class Settings(BaseSettings):
     f2a_default_lang: str = "en"
     f2a_upload_dir: str = "/app/uploads"
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    @field_validator("allowed_origins", mode="before")
+    @classmethod
+    def parse_origins(cls, v: object) -> object:
+        if isinstance(v, str) and not v.startswith("["):
+            return [s.strip() for s in v.split(",") if s.strip()]
+        return v
+
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "env_ignore_empty": True,
+    }
 
 
 settings = Settings()

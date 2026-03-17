@@ -10,7 +10,9 @@ services:
       context: ./src/backend
       dockerfile: Dockerfile.dev
     container_name: hr_gallery_backend_dev
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       - APP_ENV=development
       - ALLOWED_ORIGINS=["http://localhost","http://localhost:3000","http://localhost:80"]
