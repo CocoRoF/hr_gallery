@@ -16,10 +16,15 @@ import {
   ChevronRight,
   Beaker,
   ExternalLink,
+  Link2,
+  Rows3,
+  Columns3,
 } from "lucide-react";
 import {
   analyzeFile,
+  analyzeUrl,
   analyzeSample,
+  getReportUrl,
   type AnalysisResult,
   type AnalysisResponse,
 } from "@/lib/api";
@@ -64,19 +69,38 @@ const SAMPLES = [
   },
 ];
 
+const URL_EXAMPLES = [
+  { label: "HuggingFace", value: "hf://datasets/scikit-learn/iris" },
+  { label: "CSV URL", value: "https://raw.githubusercontent.com/..." },
+];
+
+type SourceMode = "file" | "url" | "sample";
+
 export default function F2aPage() {
+  // Source
+  const [sourceMode, setSourceMode] = useState<SourceMode>("file");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [urlInput, setUrlInput] = useState("");
+
+  // Config
   const [preset, setPreset] = useState("fast");
   const [lang, setLang] = useState("en");
   const [advanced, setAdvanced] = useState(true);
 
+  // Result
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<AnalysisResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const onDrop = useCallback((files: File[]) => {
-    if (files.length > 0) setSelectedFile(files[0]);
-  }, []);
+  const onDrop = useCallback(
+    (files: File[]) => {
+      if (files.length > 0) {
+        setSelectedFile(files[0]);
+        if (sourceMode !== "file") setSourceMode("file");
+      }
+    },
+    [sourceMode]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -92,14 +116,26 @@ export default function F2aPage() {
     maxFiles: 1,
   });
 
+  const canAnalyze =
+    !loading &&
+    ((sourceMode === "file" && selectedFile !== null) ||
+      (sourceMode === "url" && urlInput.trim() !== ""));
+
   async function handleAnalyze() {
-    if (!selectedFile) return;
+    if (!canAnalyze) return;
     setLoading(true);
     setError(null);
     setResponse(null);
 
     try {
-      const res = await analyzeFile(selectedFile, preset, lang, advanced);
+      let res: AnalysisResponse;
+      if (sourceMode === "file" && selectedFile) {
+        res = await analyzeFile(selectedFile, preset, lang, advanced);
+      } else if (sourceMode === "url") {
+        res = await analyzeUrl(urlInput.trim(), preset, lang, advanced);
+      } else {
+        return;
+      }
       setResponse(res);
     } catch (err: any) {
       setError(err.message || "분석 중 오류가 발생했습니다.");
@@ -109,6 +145,7 @@ export default function F2aPage() {
   }
 
   async function handleSample(sampleId: string) {
+    setSourceMode("sample");
     setLoading(true);
     setError(null);
     setResponse(null);
@@ -124,6 +161,12 @@ export default function F2aPage() {
     }
   }
 
+  // Code preview source string
+  const sourceStr =
+    sourceMode === "url" && urlInput.trim()
+      ? urlInput.trim()
+      : selectedFile?.name || "data.csv";
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Header */}
@@ -134,50 +177,145 @@ export default function F2aPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-100">f2a 데모</h1>
           <p className="text-sm text-gray-400">
-            파일을 업로드하면 자동으로 21가지 통계 분석을 수행합니다.
+            파일, URL, HuggingFace 데이터셋을 업로드하면 자동으로 21가지 통계
+            분석을 수행합니다.
           </p>
         </div>
         <span className="badge-f2a ml-auto">v1.0.3</span>
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-3">
-        {/* Left: Upload & Config */}
+        {/* ─── Left: Source & Config ─── */}
         <div className="space-y-6 lg:col-span-1">
-          {/* File Drop Zone */}
+          {/* Source Tabs */}
           <div className="card">
-            <h3 className="text-sm font-semibold text-gray-100">
-              파일 업로드
-            </h3>
-            <div
-              {...getRootProps()}
-              className={`mt-3 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-all ${
-                isDragActive
-                  ? "border-f2a bg-f2a/5"
-                  : "border-surface-300 hover:border-f2a/50"
-              }`}
-            >
-              <input {...getInputProps()} />
-              <Upload
-                size={32}
-                className={isDragActive ? "text-f2a" : "text-surface-400"}
-              />
-              <p className="mt-3 text-sm text-gray-400">
-                {isDragActive
-                  ? "여기에 놓으세요"
-                  : "파일을 드래그하거나 클릭하세요"}
-              </p>
-              <p className="mt-1 text-xs text-surface-500">
-                CSV, TSV, JSON, Parquet, Excel (최대 50MB)
-              </p>
+            <div className="flex gap-1 rounded-lg bg-surface-100 p-1">
+              {(
+                [
+                  { mode: "file" as SourceMode, icon: Upload, label: "파일" },
+                  { mode: "url" as SourceMode, icon: Link2, label: "URL" },
+                  {
+                    mode: "sample" as SourceMode,
+                    icon: Beaker,
+                    label: "샘플",
+                  },
+                ] as const
+              ).map(({ mode, icon: Icon, label }) => (
+                <button
+                  key={mode}
+                  onClick={() => setSourceMode(mode)}
+                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-all ${
+                    sourceMode === mode
+                      ? "bg-f2a/20 text-f2a"
+                      : "text-surface-500 hover:text-gray-300"
+                  }`}
+                >
+                  <Icon size={14} />
+                  {label}
+                </button>
+              ))}
             </div>
 
-            {selectedFile && (
-              <div className="mt-3 flex items-center gap-2 rounded-lg bg-f2a/10 px-3 py-2 text-sm text-f2a-light">
-                <FileSpreadsheet size={16} />
-                <span className="truncate">{selectedFile.name}</span>
-                <span className="ml-auto text-xs text-surface-500">
-                  {(selectedFile.size / 1024).toFixed(0)} KB
-                </span>
+            {/* File Source */}
+            {sourceMode === "file" && (
+              <div className="mt-4">
+                <div
+                  {...getRootProps()}
+                  className={`flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed p-8 transition-all ${
+                    isDragActive
+                      ? "border-f2a bg-f2a/5"
+                      : "border-surface-300 hover:border-f2a/50"
+                  }`}
+                >
+                  <input {...getInputProps()} />
+                  <Upload
+                    size={32}
+                    className={
+                      isDragActive ? "text-f2a" : "text-surface-400"
+                    }
+                  />
+                  <p className="mt-3 text-sm text-gray-400">
+                    {isDragActive
+                      ? "여기에 놓으세요"
+                      : "파일을 드래그하거나 클릭하세요"}
+                  </p>
+                  <p className="mt-1 text-xs text-surface-500">
+                    CSV, TSV, JSON, Parquet, Excel (최대 50MB)
+                  </p>
+                </div>
+
+                {selectedFile && (
+                  <div className="mt-3 flex items-center gap-2 rounded-lg bg-f2a/10 px-3 py-2 text-sm text-f2a-light">
+                    <FileSpreadsheet size={16} />
+                    <span className="truncate">{selectedFile.name}</span>
+                    <span className="ml-auto text-xs text-surface-500">
+                      {(selectedFile.size / 1024).toFixed(0)} KB
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* URL Source */}
+            {sourceMode === "url" && (
+              <div className="mt-4 space-y-3">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-400">
+                    데이터 소스
+                  </label>
+                  <input
+                    type="text"
+                    value={urlInput}
+                    onChange={(e) => setUrlInput(e.target.value)}
+                    placeholder="URL 또는 HuggingFace dataset ID"
+                    className="w-full rounded-lg border border-surface-300 bg-surface-100 px-3 py-2.5 text-sm text-gray-200 placeholder-surface-500 outline-none transition-colors focus:border-f2a/50"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleAnalyze();
+                    }}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-surface-500">
+                    예시:
+                  </p>
+                  {URL_EXAMPLES.map((ex) => (
+                    <button
+                      key={ex.label}
+                      onClick={() => setUrlInput(ex.value)}
+                      className="block w-full truncate rounded px-2 py-1 text-left text-xs text-surface-500 transition-colors hover:bg-surface-100 hover:text-f2a-light"
+                    >
+                      <span className="font-medium text-gray-400">
+                        {ex.label}:
+                      </span>{" "}
+                      {ex.value}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Sample Source */}
+            {sourceMode === "sample" && (
+              <div className="mt-4 space-y-2">
+                {SAMPLES.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => handleSample(s.id)}
+                    disabled={loading}
+                    className="flex w-full items-center gap-3 rounded-lg border border-surface-300 px-3 py-2.5 text-left transition-all hover:border-f2a/50 hover:bg-surface-100 disabled:opacity-50"
+                  >
+                    <Database
+                      size={16}
+                      className="shrink-0 text-f2a-light"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-gray-200">
+                        {s.name}
+                      </p>
+                      <p className="text-xs text-surface-500">{s.desc}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
             )}
           </div>
@@ -230,44 +368,20 @@ export default function F2aPage() {
               고급 분석 포함
             </label>
 
-            <button
-              onClick={handleAnalyze}
-              disabled={loading || !selectedFile}
-              className="btn-f2a w-full"
-            >
-              {loading ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : (
-                <BarChart3 size={18} />
-              )}
-              분석 실행
-            </button>
-          </div>
-
-          {/* Sample Datasets */}
-          <div className="card">
-            <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-100">
-              <Beaker size={16} />
-              샘플 데이터셋
-            </h3>
-            <div className="mt-3 space-y-2">
-              {SAMPLES.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => handleSample(s.id)}
-                  disabled={loading}
-                  className="flex w-full items-center gap-3 rounded-lg border border-surface-300 px-3 py-2.5 text-left transition-all hover:border-f2a/50 hover:bg-surface-100 disabled:opacity-50"
-                >
-                  <Database size={16} className="shrink-0 text-f2a-light" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-200">
-                      {s.name}
-                    </p>
-                    <p className="text-xs text-surface-500">{s.desc}</p>
-                  </div>
-                </button>
-              ))}
-            </div>
+            {sourceMode !== "sample" && (
+              <button
+                onClick={handleAnalyze}
+                disabled={!canAnalyze}
+                className="btn-f2a w-full"
+              >
+                {loading ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <BarChart3 size={18} />
+                )}
+                분석 실행
+              </button>
+            )}
           </div>
 
           {/* Code Preview */}
@@ -278,13 +392,13 @@ export default function F2aPage() {
             </div>
             <pre className="mt-2 overflow-x-auto font-mono text-sm text-gray-400">
               <code>
-                {`import f2a\n\n${preset !== "full" ? `config = f2a.AnalysisConfig.${preset === "basic_only" ? "basic_only" : preset}()\n` : ""}report = f2a.analyze(\n    "${selectedFile?.name || "data.csv"}"${preset !== "full" ? ",\n    config=config" : ""}\n)\nreport.to_html("output/", lang="${lang}")`}
+                {`import f2a\n\n${preset !== "full" ? `config = f2a.AnalysisConfig.${preset === "basic_only" ? "basic_only" : preset}()\n` : ""}report = f2a.analyze(\n    "${sourceStr}"${preset !== "full" ? ",\n    config=config" : ""}\n)\nreport.to_html("output/", lang="${lang}")`}
               </code>
             </pre>
           </div>
         </div>
 
-        {/* Right: Results */}
+        {/* ─── Right: Results ─── */}
         <div className="lg:col-span-2">
           {/* Loading */}
           {loading && (
@@ -294,7 +408,7 @@ export default function F2aPage() {
                 분석을 실행 중입니다...
               </p>
               <p className="mt-1 text-xs text-surface-500">
-                파일 크기에 따라 수 초에서 수 분이 소요될 수 있습니다.
+                데이터 크기에 따라 수 초에서 수 분이 소요될 수 있습니다.
               </p>
             </div>
           )}
@@ -325,7 +439,7 @@ export default function F2aPage() {
             <div className="card flex flex-col items-center justify-center py-16">
               <BarChart3 size={48} className="text-surface-400" />
               <p className="mt-4 text-gray-400">
-                파일을 업로드하거나 샘플 데이터를 선택하세요.
+                파일을 업로드하거나 URL을 입력하세요.
               </p>
               <p className="mt-1 text-xs text-surface-500">
                 분석 결과가 여기에 표시됩니다.
@@ -337,6 +451,8 @@ export default function F2aPage() {
     </div>
   );
 }
+
+// ─── Results Component ───
 
 function AnalysisResults({
   analysis,
@@ -364,14 +480,14 @@ function AnalysisResults({
 
   return (
     <div className="space-y-6">
-      {/* Summary */}
+      {/* Summary + HTML Report Button */}
       <div className="card">
         <div className="flex items-center gap-2 text-sm font-semibold text-gray-100">
           <CheckCircle2 size={18} className="text-green-400" />
           분석 완료
         </div>
 
-        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
           <StatBox
             label="파일"
             value={filename}
@@ -388,22 +504,24 @@ function AnalysisResults({
             icon={<BarChart3 size={14} />}
           />
           <StatBox
-            label="컬럼 수"
-            value={`${analysis.schema_info.length}개`}
-            icon={<Database size={14} />}
+            label="행"
+            value={analysis.n_rows ? `${analysis.n_rows.toLocaleString()}` : `${analysis.schema_info.length}`}
+            icon={<Rows3 size={14} />}
+          />
+          <StatBox
+            label="열"
+            value={analysis.n_cols ? `${analysis.n_cols}` : `${analysis.schema_info.length}`}
+            icon={<Columns3 size={14} />}
           />
         </div>
 
         {htmlAvailable && analysisId && (
           <button
-            onClick={() => {
-              const apiBase = process.env.NEXT_PUBLIC_API_URL || "/api";
-              window.open(`${apiBase}/f2a/report/${analysisId}`, "_blank");
-            }}
+            onClick={() => window.open(getReportUrl(analysisId), "_blank")}
             className="btn-f2a mt-4 w-full"
           >
             <ExternalLink size={16} />
-            HTML 리포트 보기
+            HTML 리포트 열기
           </button>
         )}
       </div>
@@ -418,6 +536,7 @@ function AnalysisResults({
                 <tr className="border-b border-surface-300 text-left text-xs text-surface-500">
                   <th className="pb-2 pr-4">컬럼명</th>
                   <th className="pb-2 pr-4">타입</th>
+                  <th className="pb-2 pr-4">추론 타입</th>
                   <th className="pb-2 pr-4">유니크</th>
                   <th className="pb-2 pr-4">결측</th>
                 </tr>
@@ -431,7 +550,12 @@ function AnalysisResults({
                     <td className="py-2 pr-4 font-mono text-xs text-gray-200">
                       {col.name}
                     </td>
-                    <td className="py-2 pr-4 text-xs">{col.inferred_type || col.dtype}</td>
+                    <td className="py-2 pr-4 text-xs">{col.dtype || "—"}</td>
+                    <td className="py-2 pr-4 text-xs">
+                      <span className="rounded bg-surface-100 px-1.5 py-0.5 text-xs">
+                        {col.inferred_type || "—"}
+                      </span>
+                    </td>
                     <td className="py-2 pr-4 text-xs">{col.n_unique ?? "—"}</td>
                     <td className="py-2 pr-4 text-xs">
                       {col.n_missing != null

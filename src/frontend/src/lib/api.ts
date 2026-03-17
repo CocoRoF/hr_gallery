@@ -131,6 +131,8 @@ export interface F2aInfoResponse {
 
 export interface AnalysisResult {
   source: string;
+  n_rows: number;
+  n_cols: number;
   schema_info: Record<string, any>[];
   sections: string[];
   results: Record<string, any>;
@@ -186,6 +188,18 @@ export async function analyzeFile(
   return (await res.json()) as AnalysisResponse;
 }
 
+export async function analyzeUrl(
+  source: string,
+  preset: string = "full",
+  lang: string = "en",
+  advanced: boolean = true
+) {
+  return apiFetch<AnalysisResponse>("/f2a/analyze-url", {
+    method: "POST",
+    body: JSON.stringify({ source, preset, lang, advanced }),
+  });
+}
+
 export async function analyzeSample(
   datasetId: string,
   preset: string = "fast",
@@ -199,4 +213,8 @@ export async function analyzeSample(
 
 export async function getSampleDatasets() {
   return apiFetch<{ datasets: SampleDataset[] }>("/f2a/sample-datasets");
+}
+
+export function getReportUrl(analysisId: string) {
+  return `${API_BASE}/f2a/report/${analysisId}`;
 }
