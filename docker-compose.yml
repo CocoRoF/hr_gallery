@@ -53,7 +53,7 @@ services:
     container_name: hr_gallery_nginx
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "58443:80"
     depends_on:
       - backend
       - frontend
