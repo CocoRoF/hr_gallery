@@ -1,0 +1,67 @@
+# ═══════════════════════════════════════════════
+# HR Gallery — Production Docker Compose
+# ═══════════════════════════════════════════════
+
+services:
+  # ─── Backend (FastAPI) ───
+  backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile
+    container_name: hr_gallery_backend
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - APP_ENV=production
+    volumes:
+      - backend_uploads:/app/uploads
+    expose:
+      - "8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - hr_gallery_net
+
+  # ─── Frontend (Next.js) ───
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile
+    container_name: hr_gallery_frontend
+    restart: unless-stopped
+    environment:
+      - NEXT_PUBLIC_API_URL=/api
+    expose:
+      - "3000"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - hr_gallery_net
+
+  # ─── Nginx (Reverse Proxy) ───
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: hr_gallery_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - hr_gallery_net
+
+volumes:
+  backend_uploads:
+    driver: local
+
+networks:
+  hr_gallery_net:
+    driver: bridge

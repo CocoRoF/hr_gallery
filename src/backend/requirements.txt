@@ -1,0 +1,22 @@
+# ─── Core ───
+fastapi==0.115.*
+uvicorn[standard]==0.34.*
+python-multipart==0.0.*
+pydantic==2.11.*
+pydantic-settings==2.9.*
+
+# ─── Libraries ───
+googer==0.2.5
+f2a==1.0.3
+
+# ─── f2a optional deps ───
+pandas>=2.0
+numpy>=1.24
+matplotlib>=3.7
+seaborn>=0.13
+scipy>=1.11
+pyarrow>=12.0
+rich>=13.0
+jinja2>=3.1
+openpyxl>=3.1
+scikit-learn>=1.3

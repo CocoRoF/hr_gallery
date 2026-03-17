@@ -1,0 +1,70 @@
+# ═══════════════════════════════════════════════
+# HR Gallery — Development Docker Compose
+# ═══════════════════════════════════════════════
+# Usage: docker compose -f docker-compose.dev.yml up --build
+
+services:
+  # ─── Backend (FastAPI, hot-reload) ───
+  backend:
+    build:
+      context: ./src/backend
+      dockerfile: Dockerfile.dev
+    container_name: hr_gallery_backend_dev
+    env_file: .env
+    environment:
+      - APP_ENV=development
+      - ALLOWED_ORIGINS=http://localhost,http://localhost:3000,http://localhost:80
+    volumes:
+      - ./src/backend/app:/app/app            # Hot-reload: mount source
+      - backend_uploads_dev:/app/uploads
+    ports:
+      - "8000:8000"                           # Direct access to API docs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health')"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    networks:
+      - hr_gallery_dev_net
+
+  # ─── Frontend (Next.js, hot-reload) ───
+  frontend:
+    build:
+      context: ./src/frontend
+      dockerfile: Dockerfile.dev
+    container_name: hr_gallery_frontend_dev
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+    volumes:
+      - ./src/frontend/src:/app/src           # Hot-reload: mount source
+      - ./src/frontend/public:/app/public
+    ports:
+      - "3000:3000"                           # Direct access to frontend
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - hr_gallery_dev_net
+
+  # ─── Nginx (Reverse Proxy) ───
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: hr_gallery_nginx_dev
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - hr_gallery_dev_net
+
+volumes:
+  backend_uploads_dev:
+    driver: local
+
+networks:
+  hr_gallery_dev_net:
+    driver: bridge
