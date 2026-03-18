@@ -4,9 +4,9 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 
 export const metadata: Metadata = {
-  title: "HR Gallery — Library Playground",
+  title: "HR Gallery — CocoRoF Library Showcase",
   description:
-    "googer & f2a 데모 플레이그라운드 — Rust-powered Python 라이브러리 갤러리",
+    "googer, f2a, Contextifier, playwLeft — CocoRoF 오픈소스 라이브러리 갤러리 플레이그라운드",
 };
 
 export default function RootLayout({

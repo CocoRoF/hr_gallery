@@ -29,6 +29,27 @@ export async function getInfo() {
   return apiFetch<{ libraries: LibraryInfo[] }>("/info");
 }
 
+export async function getLibraries() {
+  return apiFetch<{ libraries: LibraryDetailInfo[] }>("/libraries");
+}
+
+export interface LibraryDetailInfo {
+  name: string;
+  version: string;
+  description: string;
+  tagline: string;
+  language: string;
+  license: string;
+  github: string;
+  pypi?: string;
+  color: string;
+  features: string[];
+  has_demo: boolean;
+  demo_path: string;
+  supported_formats?: string[];
+  supported_languages?: string[];
+}
+
 // ─── Googer ───
 
 export interface SearchParams {

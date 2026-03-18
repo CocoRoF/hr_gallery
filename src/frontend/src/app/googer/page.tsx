@@ -13,6 +13,9 @@ import {
   Settings2,
   Wrench,
   AlertCircle,
+  ArrowLeft,
+  Github,
+  Package,
 } from "lucide-react";
 import {
   googerSearch,
@@ -251,6 +254,12 @@ export default function GoogerPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Back Link */}
+      <a href="/" className="mb-6 inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-gray-300 transition-colors">
+        <ArrowLeft size={16} />
+        갤러리로 돌아가기
+      </a>
+
       {/* Header */}
       <div className="flex items-center gap-4">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-googer/15 text-googer">
@@ -262,7 +271,25 @@ export default function GoogerPage() {
             primp + lxml 기반의 빠르고 안전한 Google 검색 라이브러리
           </p>
         </div>
-        <span className="badge-googer ml-auto">v0.4.0</span>
+        <div className="ml-auto flex items-center gap-2">
+          <a
+            href="https://github.com/CocoRoF/googer"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-surface-300 px-3 py-1.5 text-xs text-gray-400 hover:border-googer/50 hover:text-googer-light transition-colors"
+          >
+            <Github size={14} /> GitHub
+          </a>
+          <a
+            href="https://pypi.org/project/googer/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-surface-300 px-3 py-1.5 text-xs text-gray-400 hover:border-googer/50 hover:text-googer-light transition-colors"
+          >
+            <Package size={14} /> PyPI
+          </a>
+          <span className="badge-googer">v0.4.0</span>
+        </div>
       </div>
 
       {/* Search Tabs */}

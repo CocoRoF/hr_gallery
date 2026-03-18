@@ -21,6 +21,9 @@ import {
   Columns3,
   AlertTriangle,
   HardDrive,
+  ArrowLeft,
+  Github,
+  Package,
 } from "lucide-react";
 import {
   analyzeFile,
@@ -171,6 +174,12 @@ export default function F2aPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      {/* Back Link */}
+      <a href="/" className="mb-6 inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-gray-300 transition-colors">
+        <ArrowLeft size={16} />
+        갤러리로 돌아가기
+      </a>
+
       {/* Header */}
       <div className="flex items-center gap-4">
         <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-f2a/15 text-f2a">
@@ -183,7 +192,25 @@ export default function F2aPage() {
             분석 + 50가지 시각화를 생성합니다.
           </p>
         </div>
-        <span className="badge-f2a ml-auto">v1.1.0</span>
+        <div className="ml-auto flex items-center gap-2">
+          <a
+            href="https://github.com/CocoRoF/f2a"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-surface-300 px-3 py-1.5 text-xs text-gray-400 hover:border-f2a/50 hover:text-f2a-light transition-colors"
+          >
+            <Github size={14} /> GitHub
+          </a>
+          <a
+            href="https://pypi.org/project/f2a/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-surface-300 px-3 py-1.5 text-xs text-gray-400 hover:border-f2a/50 hover:text-f2a-light transition-colors"
+          >
+            <Package size={14} /> PyPI
+          </a>
+          <span className="badge-f2a">v1.1.0</span>
+        </div>
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-3">
