@@ -1,5 +1,7 @@
 """Pydantic schemas for f2a API — v1.1.0."""
 
+from typing import Any
+
 from pydantic import BaseModel, Field
 
 
@@ -91,18 +93,18 @@ class AnalysisResultSchema(BaseModel):
     source: str
     shape: list[int] = [0, 0]
     schema_info: SchemaInfoSchema = SchemaInfoSchema()
-    stats_summary: dict = {}
-    correlation_matrix: dict = {}
-    outlier_summary: dict = {}
-    quality_scores: dict = {}
-    pca_summary: dict = {}
-    duplicate_stats: dict = {}
-    missing_info: dict = {}
-    distribution_info: dict = {}
-    categorical_analysis: dict = {}
-    feature_importance: dict = {}
-    preprocessing: dict = {}
-    advanced_stats: dict = {}
+    stats_summary: Any = {}
+    correlation_matrix: Any = {}
+    outlier_summary: Any = {}
+    quality_scores: Any = {}
+    pca_summary: Any = {}
+    duplicate_stats: Any = {}
+    missing_info: Any = {}
+    distribution_info: Any = {}
+    categorical_analysis: Any = {}
+    feature_importance: Any = {}
+    preprocessing: Any = {}
+    advanced_stats: Any = {}
     warnings: list[str] = []
     duration_sec: float = 0.0
     started_at: str = ""

@@ -110,6 +110,16 @@ def _serialize(obj: object) -> object:
         return [_serialize(v) for v in obj]
     if isinstance(obj, float) and (obj != obj or obj == float("inf") or obj == float("-inf")):
         return None
+    # Handle dataclass objects (e.g. PreprocessingResult)
+    import dataclasses
+    if dataclasses.is_dataclass(obj) and not isinstance(obj, type):
+        if hasattr(obj, 'summary_dict'):
+            return _serialize(obj.summary_dict())
+        return {
+            f.name: _serialize(getattr(obj, f.name))
+            for f in dataclasses.fields(obj)
+            if not isinstance(getattr(obj, f.name), pd.DataFrame)
+        }
     return obj
 
 
