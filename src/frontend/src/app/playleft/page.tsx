@@ -86,7 +86,7 @@ const CODE_EXAMPLES = [
 async with playleft.Browser() as browser:
     page = await browser.new_page()
     await page.goto("https://example.com")
-    
+
     title = await page.title()
     print(f"Title: {title}")`,
   },
@@ -95,7 +95,7 @@ async with playleft.Browser() as browser:
     code: `async with playleft.Browser() as browser:
     page = await browser.new_page()
     await page.goto("https://example.com")
-    
+
     # CSS 셀렉터로 요소 선택
     element = await page.query_selector("input#search")
     await element.type("hello world")
