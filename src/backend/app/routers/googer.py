@@ -1,7 +1,8 @@
-"""googer search API router."""
+"""googer search API router — v0.4.0 (Pure Python)."""
 
 from fastapi import APIRouter, HTTPException
-from googer import Googer, Query, GoogerException
+from googer import Googer, Query
+from googer.exceptions import GoogerException, NoResultsException
 
 from app.config import settings
 from app.schemas.googer import (
@@ -18,6 +19,11 @@ router = APIRouter()
 
 def _get_client() -> Googer:
     return Googer(timeout=settings.googer_timeout, max_retries=settings.googer_max_retries)
+
+
+def _empty_response(query: str, search_type: str) -> SearchResponse:
+    """NoResultsException 발생 시 빈 결과 반환."""
+    return SearchResponse(query=query, type=search_type, count=0, results=[])
 
 
 # ─── Text Search ───
@@ -42,8 +48,10 @@ async def text_search(req: SearchRequest):
             count=len(results),
             results=[r.to_dict() for r in results],
         )
+    except NoResultsException:
+        return _empty_response(req.query, "text")
     except GoogerException as e:
-        raise HTTPException(status_code=502, detail=str(e))
+        raise HTTPException(status_code=502, detail=str(e)) from e
 
 
 # ─── Image Search ───
@@ -71,8 +79,10 @@ async def image_search(req: ImageSearchRequest):
             count=len(results),
             results=[r.to_dict() for r in results],
         )
+    except NoResultsException:
+        return _empty_response(req.query, "images")
     except GoogerException as e:
-        raise HTTPException(status_code=502, detail=str(e))
+        raise HTTPException(status_code=502, detail=str(e)) from e
 
 
 # ─── News Search ───
@@ -96,8 +106,10 @@ async def news_search(req: SearchRequest):
             count=len(results),
             results=[r.to_dict() for r in results],
         )
+    except NoResultsException:
+        return _empty_response(req.query, "news")
     except GoogerException as e:
-        raise HTTPException(status_code=502, detail=str(e))
+        raise HTTPException(status_code=502, detail=str(e)) from e
 
 
 # ─── Video Search ───
@@ -122,8 +134,10 @@ async def video_search(req: VideoSearchRequest):
             count=len(results),
             results=[r.to_dict() for r in results],
         )
+    except NoResultsException:
+        return _empty_response(req.query, "videos")
     except GoogerException as e:
-        raise HTTPException(status_code=502, detail=str(e))
+        raise HTTPException(status_code=502, detail=str(e)) from e
 
 
 # ─── Query Builder ───
@@ -153,6 +167,15 @@ async def query_builder(req: QueryBuilderRequest):
     if req.inurl:
         q = q.inurl(req.inurl)
         operators["inurl"] = req.inurl
+    if req.intext:
+        q = q.intext(req.intext)
+        operators["intext"] = req.intext
+    if req.or_term:
+        q = q.or_term(req.or_term)
+        operators["or_term"] = req.or_term
+    if req.related:
+        q = q.related(req.related)
+        operators["related"] = req.related
     if req.date_from and req.date_to:
         q = q.date_range(req.date_from, req.date_to)
         operators["date_range"] = f"{req.date_from} ~ {req.date_to}"

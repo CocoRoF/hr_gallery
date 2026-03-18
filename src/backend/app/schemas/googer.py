@@ -1,4 +1,4 @@
-"""Pydantic schemas for googer API."""
+"""Pydantic schemas for googer API — v0.4.0."""
 
 from pydantic import BaseModel, Field
 
@@ -23,15 +23,18 @@ class QueryBuilderRequest(BaseModel):
     exclude: str | None = None
     intitle: str | None = None
     inurl: str | None = None
+    intext: str | None = None
+    or_term: str | None = None
+    related: str | None = None
     date_from: str | None = None
     date_to: str | None = None
 
 
 class ImageSearchRequest(SearchRequest):
-    size: str | None = Field(None, description="이미지 크기 (small/medium/large/wallpaper)")
-    color: str | None = Field(None, description="이미지 색상 필터")
-    image_type: str | None = Field(None, description="이미지 유형 (photo/clipart/gif/transparent/line)")
-    license_type: str | None = Field(None, description="라이선스 타입")
+    size: str | None = Field(None, description="이미지 크기 (large/medium/icon)")
+    color: str | None = Field(None, description="이미지 색상 필터 (color/gray/mono/trans)")
+    image_type: str | None = Field(None, description="이미지 유형 (face/photo/clipart/lineart/animated)")
+    license_type: str | None = Field(None, description="라이선스 (creative_commons/commercial)")
 
 
 class VideoSearchRequest(SearchRequest):
@@ -52,8 +55,8 @@ class ImageResultSchema(BaseModel):
     image: str
     thumbnail: str
     url: str
-    height: int
-    width: int
+    height: str
+    width: str
     source: str
 
 

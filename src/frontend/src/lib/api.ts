@@ -59,6 +59,9 @@ export interface QueryBuilderParams {
   exclude?: string;
   intitle?: string;
   inurl?: string;
+  intext?: string;
+  or_term?: string;
+  related?: string;
   date_from?: string;
   date_to?: string;
 }
