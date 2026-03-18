@@ -1,23 +1,23 @@
-"""Pydantic schemas for f2a API."""
+"""Pydantic schemas for f2a API — v1.1.0."""
 
 from pydantic import BaseModel, Field
 
 
 class AnalysisConfigSchema(BaseModel):
-    """Analysis configuration — mirrors f2a.AnalysisConfig."""
+    """Analysis configuration — mirrors f2a.AnalysisConfig (v1.1.0)."""
 
     # Basic modules
+    preprocessing: bool = True
     descriptive: bool = True
-    correlation: bool = True
     distribution: bool = True
-    missing: bool = True
+    correlation: bool = True
     outlier: bool = True
     categorical: bool = True
     feature_importance: bool = True
     pca: bool = True
     duplicates: bool = True
-    quality: bool = True
-    preprocessing: bool = True
+    quality_score: bool = True  # renamed from 'quality' in 1.1.0
+    visualizations: bool = True  # new in 1.1.0
 
     # Advanced master toggle
     advanced: bool = True
@@ -65,14 +65,45 @@ class UrlAnalysisRequest(BaseModel):
     advanced: bool = Field(True, description="고급 분석 활성화")
 
 
-class AnalysisResultSchema(BaseModel):
-    source: str
+class ColumnInfoSchema(BaseModel):
+    """Column metadata from DataSchema.columns."""
+
+    name: str
+    dtype: str
+    inferred_type: str
+    n_unique: int = 0
+    n_missing: int = 0
+    missing_ratio: float = 0.0
+
+
+class SchemaInfoSchema(BaseModel):
+    """Data schema summary."""
+
     n_rows: int = 0
     n_cols: int = 0
-    schema_info: list[dict] = []
-    sections: list[str] = []
-    results: dict = {}
-    preprocessing: dict | None = None
+    memory_usage_mb: float = 0.0
+    columns: list[ColumnInfoSchema] = []
+
+
+class AnalysisResultSchema(BaseModel):
+    """Analysis results — restructured for v1.1.0."""
+
+    source: str
+    shape: list[int] = [0, 0]
+    schema_info: SchemaInfoSchema = SchemaInfoSchema()
+    stats_summary: dict = {}
+    correlation_matrix: dict = {}
+    outlier_summary: dict = {}
+    quality_scores: dict = {}
+    pca_summary: dict = {}
+    duplicate_stats: dict = {}
+    missing_info: dict = {}
+    distribution_info: dict = {}
+    categorical_analysis: dict = {}
+    feature_importance: dict = {}
+    preprocessing: dict = {}
+    advanced_stats: dict = {}
+    warnings: list[str] = []
     duration_sec: float = 0.0
     started_at: str = ""
 
@@ -84,6 +115,17 @@ class AnalysisResponse(BaseModel):
     analysis: AnalysisResultSchema | None = None
     html_available: bool = False
     error: str | None = None
+
+
+class SampleDatasetSchema(BaseModel):
+    """Sample dataset metadata."""
+
+    id: str
+    name: str
+    description: str
+    rows: int
+    cols: int
+    size_kb: float
 
 
 class SupportedFormatsResponse(BaseModel):

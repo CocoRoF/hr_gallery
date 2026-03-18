@@ -55,7 +55,9 @@ async def info():
                     "analyze",
                     "html_report",
                     "multi_language",
-                    "21_analysis_modules",
+                    "23_analysis_modules",
+                    "50+_visualizations",
+                    "24+_file_formats",
                 ],
                 "supported_formats": [
                     "csv", "tsv", "json", "jsonl", "parquet", "excel",

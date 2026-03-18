@@ -132,14 +132,39 @@ export interface F2aInfoResponse {
   presets: { id: string; name: string; description: string }[];
 }
 
-export interface AnalysisResult {
-  source: string;
+export interface ColumnInfo {
+  name: string;
+  dtype: string;
+  inferred_type: string;
+  n_unique: number;
+  n_missing: number;
+  missing_ratio: number;
+}
+
+export interface SchemaInfo {
   n_rows: number;
   n_cols: number;
-  schema_info: Record<string, any>[];
-  sections: string[];
-  results: Record<string, any>;
-  preprocessing: Record<string, any> | null;
+  memory_usage_mb: number;
+  columns: ColumnInfo[];
+}
+
+export interface AnalysisResult {
+  source: string;
+  shape: number[];
+  schema_info: SchemaInfo;
+  stats_summary: Record<string, any>;
+  correlation_matrix: Record<string, any>;
+  outlier_summary: Record<string, any>;
+  quality_scores: Record<string, any>;
+  pca_summary: Record<string, any>;
+  duplicate_stats: Record<string, any>;
+  missing_info: Record<string, any>;
+  distribution_info: Record<string, any>;
+  categorical_analysis: Record<string, any>;
+  feature_importance: Record<string, any>;
+  preprocessing: Record<string, any>;
+  advanced_stats: Record<string, any>;
+  warnings: string[];
   duration_sec: number;
   started_at: string;
 }

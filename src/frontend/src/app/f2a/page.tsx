@@ -19,6 +19,8 @@ import {
   Link2,
   Rows3,
   Columns3,
+  AlertTriangle,
+  HardDrive,
 } from "lucide-react";
 import {
   analyzeFile,
@@ -30,9 +32,9 @@ import {
 } from "@/lib/api";
 
 const PRESETS = [
-  { id: "full", name: "Full Analysis", desc: "21개 전체 분석 모듈" },
+  { id: "full", name: "Full Analysis", desc: "23개 전체 분석 모듈 (기본 13 + 고급 10)" },
   { id: "fast", name: "Fast", desc: "PCA, 피처 중요도, 고급 분석 제외" },
-  { id: "basic_only", name: "Basic Only", desc: "기본 10개 모듈만" },
+  { id: "basic_only", name: "Basic Only", desc: "기본 13개 모듈만" },
   { id: "minimal", name: "Minimal", desc: "기술 통계만" },
 ];
 
@@ -49,23 +51,23 @@ const SAMPLES = [
   {
     id: "iris",
     name: "Iris Dataset",
-    desc: "붓꽃 데이터 — 150행 × 5열",
+    desc: "붓꽃 데이터 — 150행 × 5열 (분류)",
     rows: 150,
     cols: 5,
   },
   {
     id: "titanic",
     name: "Titanic Dataset",
-    desc: "타이타닉 승객 — 891행 × 12열",
+    desc: "타이타닉 승객 — 891행 × 15열 (결측치 포함)",
     rows: 891,
-    cols: 12,
+    cols: 15,
   },
   {
     id: "housing",
-    name: "Boston Housing",
-    desc: "주택 가격 — 506행 × 14열",
-    rows: 506,
-    cols: 14,
+    name: "California Housing",
+    desc: "캘리포니아 주택 가격 — 20,640행 × 9열 (회귀)",
+    rows: 20640,
+    cols: 9,
   },
 ];
 
@@ -177,11 +179,11 @@ export default function F2aPage() {
         <div>
           <h1 className="text-2xl font-bold text-gray-100">f2a 데모</h1>
           <p className="text-sm text-gray-400">
-            파일, URL, HuggingFace 데이터셋을 업로드하면 자동으로 21가지 통계
-            분석을 수행합니다.
+            파일, URL, HuggingFace 데이터셋을 업로드하면 자동으로 23가지 통계
+            분석 + 50가지 시각화를 생성합니다.
           </p>
         </div>
-        <span className="badge-f2a ml-auto">v1.0.3</span>
+        <span className="badge-f2a ml-auto">v1.1.0</span>
       </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-3">
@@ -392,7 +394,7 @@ export default function F2aPage() {
             </div>
             <pre className="mt-2 overflow-x-auto font-mono text-sm text-gray-400">
               <code>
-                {`import f2a\n\n${preset !== "full" ? `config = f2a.AnalysisConfig.${preset === "basic_only" ? "basic_only" : preset}()\n` : ""}report = f2a.analyze(\n    "${sourceStr}"${preset !== "full" ? ",\n    config=config" : ""}\n)\nreport.to_html("output/", lang="${lang}")`}
+                {`import f2a\n\n${preset !== "full" ? `config = f2a.AnalysisConfig.${preset === "basic_only" ? "basic_only" : preset}()\n` : ""}report = f2a.analyze(\n    "${sourceStr}"${preset !== "full" ? ",\n    config=config" : ""}\n)\nreport.to_html("output/")`}
               </code>
             </pre>
           </div>
@@ -452,6 +454,41 @@ export default function F2aPage() {
   );
 }
 
+// ─── Section Metadata ───
+
+const ANALYSIS_SECTIONS: {
+  key: keyof Pick<
+    AnalysisResult,
+    | "stats_summary"
+    | "correlation_matrix"
+    | "missing_info"
+    | "distribution_info"
+    | "outlier_summary"
+    | "categorical_analysis"
+    | "feature_importance"
+    | "pca_summary"
+    | "duplicate_stats"
+    | "quality_scores"
+    | "preprocessing"
+    | "advanced_stats"
+  >;
+  label: string;
+  category: "basic" | "advanced";
+}[] = [
+  { key: "stats_summary", label: "기술 통계", category: "basic" },
+  { key: "correlation_matrix", label: "상관 분석", category: "basic" },
+  { key: "distribution_info", label: "분포 분석", category: "basic" },
+  { key: "missing_info", label: "결측치 분석", category: "basic" },
+  { key: "outlier_summary", label: "이상치 탐지", category: "basic" },
+  { key: "categorical_analysis", label: "범주형 분석", category: "basic" },
+  { key: "feature_importance", label: "피처 중요도", category: "basic" },
+  { key: "pca_summary", label: "PCA 분석", category: "basic" },
+  { key: "duplicate_stats", label: "중복 검출", category: "basic" },
+  { key: "quality_scores", label: "데이터 품질", category: "basic" },
+  { key: "preprocessing", label: "전처리", category: "basic" },
+  { key: "advanced_stats", label: "고급 분석", category: "advanced" },
+];
+
 // ─── Results Component ───
 
 function AnalysisResults({
@@ -478,6 +515,12 @@ function AnalysisResults({
     });
   }
 
+  const schema = analysis.schema_info;
+  const activeSections = ANALYSIS_SECTIONS.filter((s) => {
+    const val = analysis[s.key];
+    return val && typeof val === "object" && Object.keys(val).length > 0;
+  });
+
   return (
     <div className="space-y-6">
       {/* Summary + HTML Report Button */}
@@ -500,20 +543,29 @@ function AnalysisResults({
           />
           <StatBox
             label="분석 모듈"
-            value={`${analysis.sections.length}개`}
+            value={`${activeSections.length}개`}
             icon={<BarChart3 size={14} />}
           />
           <StatBox
             label="행"
-            value={analysis.n_rows ? `${analysis.n_rows.toLocaleString()}` : `${analysis.schema_info.length}`}
+            value={`${(schema.n_rows || analysis.shape[0]).toLocaleString()}`}
             icon={<Rows3 size={14} />}
           />
           <StatBox
             label="열"
-            value={analysis.n_cols ? `${analysis.n_cols}` : `${analysis.schema_info.length}`}
+            value={`${schema.n_cols || analysis.shape[1]}`}
             icon={<Columns3 size={14} />}
           />
         </div>
+
+        {schema.memory_usage_mb > 0 && (
+          <div className="mt-3 flex items-center gap-2 text-xs text-surface-500">
+            <HardDrive size={12} />
+            메모리: {schema.memory_usage_mb < 1
+              ? `${(schema.memory_usage_mb * 1024).toFixed(0)} KB`
+              : `${schema.memory_usage_mb.toFixed(1)} MB`}
+          </div>
+        )}
 
         {htmlAvailable && analysisId && (
           <button
@@ -521,13 +573,30 @@ function AnalysisResults({
             className="btn-f2a mt-4 w-full"
           >
             <ExternalLink size={16} />
-            HTML 리포트 열기
+            HTML 리포트 열기 (인터랙티브)
           </button>
         )}
       </div>
 
+      {/* Warnings */}
+      {analysis.warnings.length > 0 && (
+        <div className="card border-yellow-500/30 bg-yellow-500/5">
+          <div className="flex items-center gap-2 text-sm font-semibold text-yellow-400">
+            <AlertTriangle size={16} />
+            분석 경고 ({analysis.warnings.length})
+          </div>
+          <ul className="mt-2 space-y-1">
+            {analysis.warnings.map((w, i) => (
+              <li key={i} className="text-xs text-yellow-300/80">
+                • {w}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Schema */}
-      {analysis.schema_info.length > 0 && (
+      {schema.columns.length > 0 && (
         <div className="card">
           <h3 className="text-sm font-semibold text-gray-100">데이터 스키마</h3>
           <div className="mt-3 overflow-x-auto">
@@ -542,7 +611,7 @@ function AnalysisResults({
                 </tr>
               </thead>
               <tbody>
-                {analysis.schema_info.map((col: any, i: number) => (
+                {schema.columns.map((col, i) => (
                   <tr
                     key={i}
                     className="border-b border-surface-300/50 text-gray-400"
@@ -559,7 +628,7 @@ function AnalysisResults({
                     <td className="py-2 pr-4 text-xs">{col.n_unique ?? "—"}</td>
                     <td className="py-2 pr-4 text-xs">
                       {col.n_missing != null
-                        ? `${col.n_missing} (${((col.missing_ratio ?? 0) * 100).toFixed(1)}%)`
+                        ? `${col.n_missing} (${(col.missing_ratio * 100).toFixed(1)}%)`
                         : "—"}
                     </td>
                   </tr>
@@ -570,32 +639,127 @@ function AnalysisResults({
         </div>
       )}
 
-      {/* Sections */}
-      {analysis.sections.map((section) => (
-        <div key={section} className="card">
-          <button
-            onClick={() => toggleSection(section)}
-            className="flex w-full items-center justify-between text-left"
-          >
-            <h3 className="text-sm font-semibold text-gray-100 capitalize">
-              {section.replace(/_/g, " ")}
-            </h3>
-            {expandedSections.has(section) ? (
-              <ChevronDown size={16} className="text-surface-500" />
-            ) : (
-              <ChevronRight size={16} className="text-surface-500" />
-            )}
-          </button>
+      {/* Analysis Sections */}
+      {activeSections.length > 0 && (
+        <>
+          {/* Basic Sections */}
+          {activeSections.filter((s) => s.category === "basic").length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-surface-500">
+                기본 분석
+              </h3>
+              {activeSections
+                .filter((s) => s.category === "basic")
+                .map((section) => (
+                  <div key={section.key} className="card">
+                    <button
+                      onClick={() => toggleSection(section.key)}
+                      className="flex w-full items-center justify-between text-left"
+                    >
+                      <h3 className="text-sm font-semibold text-gray-100">
+                        {section.label}
+                      </h3>
+                      {expandedSections.has(section.key) ? (
+                        <ChevronDown size={16} className="text-surface-500" />
+                      ) : (
+                        <ChevronRight size={16} className="text-surface-500" />
+                      )}
+                    </button>
 
-          {expandedSections.has(section) && analysis.results[section] && (
-            <div className="mt-4">
-              <pre className="overflow-x-auto rounded-lg bg-surface-100 p-4 font-mono text-xs text-gray-400">
-                {JSON.stringify(analysis.results[section], null, 2)}
-              </pre>
+                    {expandedSections.has(section.key) && (
+                      <div className="mt-4">
+                        <pre className="overflow-x-auto rounded-lg bg-surface-100 p-4 font-mono text-xs text-gray-400">
+                          {JSON.stringify(analysis[section.key], null, 2)}
+                        </pre>
+                      </div>
+                    )}
+                  </div>
+                ))}
             </div>
           )}
-        </div>
-      ))}
+
+          {/* Advanced Sections */}
+          {activeSections.filter((s) => s.category === "advanced").length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-surface-500">
+                고급 분석
+              </h3>
+              {activeSections
+                .filter((s) => s.category === "advanced")
+                .map((section) => {
+                  const data = analysis[section.key] as Record<string, any>;
+                  const subKeys = Object.keys(data);
+
+                  return (
+                    <div key={section.key} className="card">
+                      <button
+                        onClick={() => toggleSection(section.key)}
+                        className="flex w-full items-center justify-between text-left"
+                      >
+                        <h3 className="text-sm font-semibold text-gray-100">
+                          {section.label}
+                          <span className="ml-2 text-xs font-normal text-surface-500">
+                            ({subKeys.length}개 모듈)
+                          </span>
+                        </h3>
+                        {expandedSections.has(section.key) ? (
+                          <ChevronDown
+                            size={16}
+                            className="text-surface-500"
+                          />
+                        ) : (
+                          <ChevronRight
+                            size={16}
+                            className="text-surface-500"
+                          />
+                        )}
+                      </button>
+
+                      {expandedSections.has(section.key) && (
+                        <div className="mt-4 space-y-3">
+                          {subKeys.map((sk) => (
+                            <div key={sk}>
+                              <button
+                                onClick={() =>
+                                  toggleSection(`${section.key}.${sk}`)
+                                }
+                                className="flex w-full items-center gap-2 text-left text-xs"
+                              >
+                                {expandedSections.has(
+                                  `${section.key}.${sk}`
+                                ) ? (
+                                  <ChevronDown
+                                    size={12}
+                                    className="text-surface-500"
+                                  />
+                                ) : (
+                                  <ChevronRight
+                                    size={12}
+                                    className="text-surface-500"
+                                  />
+                                )}
+                                <span className="font-medium capitalize text-gray-300">
+                                  {sk.replace(/_/g, " ")}
+                                </span>
+                              </button>
+                              {expandedSections.has(
+                                `${section.key}.${sk}`
+                              ) && (
+                                <pre className="mt-2 overflow-x-auto rounded-lg bg-surface-100 p-3 font-mono text-xs text-gray-400">
+                                  {JSON.stringify(data[sk], null, 2)}
+                                </pre>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

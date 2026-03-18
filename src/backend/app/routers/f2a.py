@@ -1,4 +1,4 @@
-"""f2a analysis API router."""
+"""f2a analysis API router — v1.1.0."""
 
 import uuid
 import shutil
@@ -13,6 +13,9 @@ from app.schemas.f2a import (
     AnalysisConfigSchema,
     AnalysisResponse,
     AnalysisResultSchema,
+    ColumnInfoSchema,
+    SchemaInfoSchema,
+    SampleDatasetSchema,
     SupportedFormatsResponse,
     UrlAnalysisRequest,
 )
@@ -22,6 +25,9 @@ router = APIRouter()
 UPLOAD_DIR = Path(settings.f2a_upload_dir)
 UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
+# Bundled sample datasets directory (relative to this file → ../../samples)
+SAMPLES_DIR = Path(__file__).resolve().parent.parent.parent / "samples"
+
 ALLOWED_EXTENSIONS = {".csv", ".tsv", ".json", ".jsonl", ".parquet", ".xlsx", ".xls"}
 
 
@@ -29,7 +35,7 @@ ALLOWED_EXTENSIONS = {".csv", ".tsv", ".json", ".jsonl", ".parquet", ".xlsx", ".
 
 
 def _build_config(schema: AnalysisConfigSchema) -> _f2a.AnalysisConfig:
-    """Convert API schema to f2a.AnalysisConfig."""
+    """Convert API schema to f2a.AnalysisConfig (v1.1.0)."""
     if schema.preset == "minimal":
         return _f2a.AnalysisConfig.minimal()
     if schema.preset == "fast":
@@ -38,17 +44,17 @@ def _build_config(schema: AnalysisConfigSchema) -> _f2a.AnalysisConfig:
         return _f2a.AnalysisConfig.basic_only()
 
     return _f2a.AnalysisConfig(
+        preprocessing=schema.preprocessing,
         descriptive=schema.descriptive,
         correlation=schema.correlation,
         distribution=schema.distribution,
-        missing=schema.missing,
         outlier=schema.outlier,
         categorical=schema.categorical,
         feature_importance=schema.feature_importance,
         pca=schema.pca,
         duplicates=schema.duplicates,
-        quality=schema.quality,
-        preprocessing=schema.preprocessing,
+        quality_score=schema.quality_score,
+        visualizations=schema.visualizations,
         advanced=schema.advanced,
         advanced_distribution=schema.advanced_distribution,
         advanced_correlation=schema.advanced_correlation,
@@ -76,29 +82,54 @@ def _build_config(schema: AnalysisConfigSchema) -> _f2a.AnalysisConfig:
     )
 
 
-def _serialize_results(results: dict) -> dict:
+def _serialize(obj: object) -> object:
     """Make analysis results JSON-serializable."""
     import numpy as np
     import pandas as pd
 
-    def _convert(obj):
-        if isinstance(obj, (np.integer,)):
-            return int(obj)
-        if isinstance(obj, (np.floating,)):
-            return float(obj)
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        if isinstance(obj, pd.DataFrame):
-            return obj.to_dict(orient="records")
-        if isinstance(obj, pd.Series):
-            return obj.to_dict()
-        if isinstance(obj, dict):
-            return {k: _convert(v) for k, v in obj.items()}
-        if isinstance(obj, (list, tuple)):
-            return [_convert(v) for v in obj]
-        return obj
+    if isinstance(obj, (np.integer,)):
+        return int(obj)
+    if isinstance(obj, (np.floating,)):
+        if np.isnan(obj) or np.isinf(obj):
+            return None
+        return float(obj)
+    if isinstance(obj, np.ndarray):
+        return [_serialize(v) for v in obj.tolist()]
+    if isinstance(obj, pd.DataFrame):
+        return {
+            k: _serialize(v) for k, v in obj.to_dict(orient="records")[0].items()
+        } if len(obj) == 1 else [
+            {kk: _serialize(vv) for kk, vv in row.items()}
+            for row in obj.to_dict(orient="records")
+        ]
+    if isinstance(obj, pd.Series):
+        return {str(k): _serialize(v) for k, v in obj.to_dict().items()}
+    if isinstance(obj, dict):
+        return {str(k): _serialize(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [_serialize(v) for v in obj]
+    if isinstance(obj, float) and (obj != obj or obj == float("inf") or obj == float("-inf")):
+        return None
+    return obj
 
-    return _convert(results)
+
+def _extract_stats(report) -> dict:
+    """Extract stats from AnalysisReport.stats into serializable dicts."""
+    stats = report.stats
+    result = {}
+
+    for attr in (
+        "summary", "correlation_matrix", "spearman_matrix", "cramers_v_matrix",
+        "vif_table", "missing_info", "distribution_info", "outlier_summary",
+        "categorical_analysis", "chi_square_matrix", "feature_importance",
+        "pca_variance", "pca_loadings", "pca_summary", "duplicate_stats",
+        "quality_scores", "quality_by_column", "preprocessing", "advanced_stats",
+    ):
+        val = getattr(stats, attr, None)
+        if val is not None:
+            result[attr] = _serialize(val)
+
+    return result
 
 
 def _run_analysis(
@@ -119,34 +150,60 @@ def _run_analysis(
     try:
         report = _f2a.analyze(source, config=config)
     except Exception as e:
-        raise HTTPException(status_code=422, detail=f"분석 실패: {e}")
+        raise HTTPException(status_code=422, detail=f"분석 실패: {e}") from e
 
-    # Generate HTML report into per-analysis subdirectory (survives restart)
+    # Generate HTML report into per-analysis subdirectory
     html_available = False
     try:
         html_dir = UPLOAD_DIR / analysis_id
         html_dir.mkdir(parents=True, exist_ok=True)
-        report.to_html(str(html_dir), lang=lang)
+        report.to_html(str(html_dir))
         html_available = True
     except Exception:
         pass
 
-    # Extract schema
-    schema_dict = report.schema if isinstance(report.schema, dict) else {}
-    columns = schema_dict.get("columns", []) if isinstance(schema_dict, dict) else []
+    # Extract schema — v1.1.0 DataSchema
+    schema = report.schema
+    columns = [
+        ColumnInfoSchema(
+            name=c.name,
+            dtype=str(c.dtype),
+            inferred_type=str(c.inferred_type).split(".")[-1],
+            n_unique=c.n_unique,
+            n_missing=c.n_missing,
+            missing_ratio=c.missing_ratio,
+        )
+        for c in schema.columns
+    ]
+    schema_info = SchemaInfoSchema(
+        n_rows=schema.n_rows,
+        n_cols=schema.n_cols,
+        memory_usage_mb=float(schema.memory_usage_mb),
+        columns=columns,
+    )
 
-    serialized_results = _serialize_results(report.results)
+    # Extract stats
+    all_stats = _extract_stats(report)
 
     analysis_result = AnalysisResultSchema(
         source=source_name,
-        n_rows=schema_dict.get("n_rows", 0),
-        n_cols=schema_dict.get("n_cols", 0),
-        schema_info=columns,
-        sections=report.sections,
-        results=serialized_results,
-        preprocessing=report.preprocessing,
+        shape=list(report.shape),
+        schema_info=schema_info,
+        stats_summary=all_stats.get("summary", {}),
+        correlation_matrix=all_stats.get("correlation_matrix", {}),
+        outlier_summary=all_stats.get("outlier_summary", {}),
+        quality_scores=all_stats.get("quality_scores", {}),
+        pca_summary=all_stats.get("pca_summary", {}),
+        duplicate_stats=all_stats.get("duplicate_stats", {}),
+        missing_info=all_stats.get("missing_info", {}),
+        distribution_info=all_stats.get("distribution_info", {}),
+        categorical_analysis=all_stats.get("categorical_analysis", {}),
+        feature_importance=all_stats.get("feature_importance", {}),
+        preprocessing=all_stats.get("preprocessing", {}),
+        advanced_stats=all_stats.get("advanced_stats", {}),
+        warnings=report.warnings,
         duration_sec=report.analysis_duration_sec,
-        started_at=report.analysis_started_at,
+        started_at=getattr(report, "analysis_started_at", ""),
     )
 
     return AnalysisResponse(
@@ -183,9 +240,9 @@ async def f2a_info():
             {"code": "fr", "name": "Français"},
         ],
         presets=[
-            {"id": "full", "name": "Full Analysis", "description": "21개 전체 분석 모듈"},
+            {"id": "full", "name": "Full Analysis", "description": "23개 전체 분석 모듈 (기본 13 + 고급 10)"},
             {"id": "fast", "name": "Fast", "description": "PCA, 피처 중요도, 고급 분석 제외"},
-            {"id": "basic_only", "name": "Basic Only", "description": "기본 10개 모듈만"},
+            {"id": "basic_only", "name": "Basic Only", "description": "기본 13개 모듈만"},
             {"id": "minimal", "name": "Minimal", "description": "기술 통계만"},
         ],
     )
@@ -226,7 +283,7 @@ async def analyze_file(
         with open(file_path, "wb") as f:
             shutil.copyfileobj(file.file, f)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"파일 저장 실패: {e}")
+        raise HTTPException(status_code=500, detail=f"파일 저장 실패: {e}") from e
 
     try:
         return _run_analysis(
@@ -281,37 +338,48 @@ async def get_report(analysis_id: str):
 # ─── Sample Data ───
 
 
+def _discover_samples() -> list[SampleDatasetSchema]:
+    """Discover bundled sample CSV files from the samples/ directory."""
+    if not SAMPLES_DIR.is_dir():
+        return []
+
+    meta = {
+        "iris": ("Iris Dataset", "붓꽃 데이터 — 분류 분석에 적합"),
+        "titanic": ("Titanic Dataset", "타이타닉 승객 데이터 — 결측치 포함"),
+        "housing": ("California Housing", "캘리포니아 주택 가격 — 회귀 분석에 적합"),
+    }
+
+    samples = []
+    for csv_file in sorted(SAMPLES_DIR.glob("*.csv")):
+        import pandas as pd
+
+        stem = csv_file.stem
+        name, desc = meta.get(stem, (stem.replace("_", " ").title(), f"{stem} 데이터셋"))
+        df = pd.read_csv(csv_file, nrows=0)
+        n_cols = len(df.columns)
+
+        # Count rows without loading full file
+        with open(csv_file, encoding="utf-8") as f:
+            n_rows = sum(1 for _ in f) - 1  # subtract header
+
+        size_kb = csv_file.stat().st_size / 1024
+
+        samples.append(SampleDatasetSchema(
+            id=stem,
+            name=name,
+            description=f"{desc} — {n_rows:,}행 × {n_cols}열",
+            rows=n_rows,
+            cols=n_cols,
+            size_kb=round(size_kb, 1),
+        ))
+
+    return samples
+
+
 @router.get("/sample-datasets")
 async def sample_datasets():
-    """데모용 샘플 데이터셋 목록"""
-    return {
-        "datasets": [
-            {
-                "id": "iris",
-                "name": "Iris Dataset",
-                "description": "붓꽃 데이터 — 150행 × 5열 (분류)",
-                "rows": 150,
-                "cols": 5,
-                "size_kb": 4,
-            },
-            {
-                "id": "titanic",
-                "name": "Titanic Dataset",
-                "description": "타이타닉 승객 데이터 — 891행 × 12열 (결측치 포함)",
-                "rows": 891,
-                "cols": 12,
-                "size_kb": 60,
-            },
-            {
-                "id": "housing",
-                "name": "Boston Housing",
-                "description": "보스턴 주택 가격 — 506행 × 14열 (회귀)",
-                "rows": 506,
-                "cols": 14,
-                "size_kb": 35,
-            },
-        ]
-    }
+    """데모용 샘플 데이터셋 목록 (bundled CSV files)"""
+    return {"datasets": [s.model_dump() for s in _discover_samples()]}
 
 
 @router.post("/analyze-sample/{dataset_id}", response_model=AnalysisResponse)
@@ -320,37 +388,22 @@ async def analyze_sample(
     preset: str = "fast",
     lang: str = "en",
 ):
-    """내장 샘플 데이터셋을 분석"""
-    import pandas as pd
-    from sklearn.datasets import load_iris
+    """내장 샘플 데이터셋(CSV)을 분석"""
+    sample_path = SAMPLES_DIR / f"{dataset_id}.csv"
 
-    sample_generators = {
-        "iris": lambda: pd.DataFrame(
-            data=load_iris().data,
-            columns=load_iris().feature_names,
-        ).assign(species=[load_iris().target_names[t] for t in load_iris().target]),
-    }
-
-    if dataset_id not in sample_generators:
-        raise HTTPException(status_code=404, detail=f"샘플 데이터셋 '{dataset_id}'를 찾을 수 없습니다.")
+    if not sample_path.is_file():
+        available = [f.stem for f in SAMPLES_DIR.glob("*.csv")] if SAMPLES_DIR.is_dir() else []
+        raise HTTPException(
+            status_code=404,
+            detail=f"샘플 데이터셋 '{dataset_id}'를 찾을 수 없습니다. 사용 가능: {available}",
+        )
 
     analysis_id = str(uuid.uuid4())
-    file_path = UPLOAD_DIR / f"{analysis_id}.csv"
 
-    try:
-        df = sample_generators[dataset_id]()
-        df.to_csv(file_path, index=False)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"샘플 생성 실패: {e}")
-
-    try:
-        return _run_analysis(
-            source=str(file_path),
-            source_name=f"{dataset_id}.csv",
-            analysis_id=analysis_id,
-            preset=preset,
-            lang=lang,
-        )
-    except HTTPException:
-        file_path.unlink(missing_ok=True)
-        raise
+    return _run_analysis(
+        source=str(sample_path),
+        source_name=f"{dataset_id}.csv",
+        analysis_id=analysis_id,
+        preset=preset,
+        lang=lang,
+    )
