@@ -10,6 +10,11 @@ export const metadata: Metadata = {
   },
   description:
     "googer, f2a, Contextifier, playwLeft — CocoRoF 오픈소스 라이브러리 갤러리",
+  icons: {
+    icon: "/favicon.png",
+    shortcut: "/favicon.png",
+    apple: "/favicon.png",
+  },
 };
 
 export default function RootLayout({
