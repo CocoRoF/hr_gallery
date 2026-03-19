@@ -16,14 +16,15 @@ import {
   Shield,
   BookOpen,
 } from "lucide-react";
+import VersionBadge from "@/components/VersionBadge";
 
 const LIBRARIES = [
   {
     name: "googer",
-    version: "0.4.1",
-    tagline: "Type-safe Google Search",
+    version: "0.7.0",
+    tagline: "Multi-Engine Web Search",
     description:
-      "강력하고 타입 안전한 Google 검색 라이브러리. 텍스트, 이미지, 뉴스, 비디오 검색을 하나의 인터페이스로 제공합니다.",
+      "7개 검색 엔진을 지원하는 타입 안전한 웹 검색 라이브러리. 멀티 엔진 동시 검색, 자동 랭킹, 캐싱을 제공합니다.",
     icon: <Search size={24} />,
     color: "googer",
     badge: "badge-googer",
@@ -32,12 +33,13 @@ const LIBRARIES = [
     pypi: "https://pypi.org/project/googer/",
     demoPath: "/googer",
     hasDemo: true,
-    features: ["웹 검색", "이미지 검색", "뉴스 검색", "비디오 검색", "쿼리 빌더"],
+    features: ["7개 엔진", "멀티 엔진", "이미지/뉴스/비디오", "캐싱", "쿼리 빌더"],
     code: `from googer import Googer
 
-results = Googer().search("python")
-for r in results:
-    print(r.title, r.href)`,
+with Googer(engine="multi") as g:
+    results = g.search("python")
+    for r in results:
+        print(r.title, r.provider)`,
   },
   {
     name: "f2a",
@@ -300,7 +302,7 @@ function LibraryCard({ lib }: { lib: (typeof LIBRARIES)[number] }) {
         <div className="min-w-0">
           <div className="flex items-center gap-3 flex-wrap">
             <h2 className="text-xl font-bold text-text-primary">{lib.name}</h2>
-            <span className={lib.badge}>v{lib.version}</span>
+            <VersionBadge name={lib.name} fallback={lib.version} className={lib.badge} />
           </div>
           <p className="mt-0.5 text-sm text-text-muted">{lib.tagline}</p>
         </div>

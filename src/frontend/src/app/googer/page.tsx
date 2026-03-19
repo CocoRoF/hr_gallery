@@ -24,6 +24,7 @@ import {
   googerVideos,
   googerQueryBuilder,
 } from "@/lib/api";
+import VersionBadge from "@/components/VersionBadge";
 
 type SearchType = "text" | "images" | "news" | "videos";
 
@@ -88,6 +89,18 @@ const VIDEO_DURATIONS = [
   { value: "long", label: "긴 영상 (>20분)" },
 ];
 
+const ENGINES = [
+  { value: "auto", label: "Auto (자동 폴백)" },
+  { value: "multi", label: "Multi (동시 검색)" },
+  { value: "duckduckgo", label: "DuckDuckGo" },
+  { value: "brave", label: "Brave" },
+  { value: "google", label: "Google" },
+  { value: "ecosia", label: "Ecosia" },
+  { value: "yahoo", label: "Yahoo" },
+  { value: "aol", label: "AOL" },
+  { value: "naver", label: "Naver" },
+];
+
 export default function GoogerPage() {
   const [searchType, setSearchType] = useState<SearchType>("text");
   const [query, setQuery] = useState("");
@@ -97,6 +110,7 @@ export default function GoogerPage() {
   const [maxResults, setMaxResults] = useState(10);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [showQueryBuilder, setShowQueryBuilder] = useState(false);
+  const [engine, setEngine] = useState("auto");
 
   // Image-specific
   const [imageSize, setImageSize] = useState("");
@@ -171,6 +185,7 @@ export default function GoogerPage() {
       safesearch,
       timelimit: timelimit || null,
       max_results: maxResults,
+      engine: engine !== "auto" ? engine : undefined,
     };
 
     try {
@@ -213,6 +228,7 @@ export default function GoogerPage() {
     if (safesearch !== "moderate") args.push(`safesearch="${safesearch}"`);
     if (timelimit) args.push(`timelimit="${timelimit}"`);
     if (maxResults !== 10) args.push(`max_results=${maxResults}`);
+    if (engine !== "auto") args.push(`engine="${engine}"`);
 
     if (searchType === "images") {
       if (imageSize) args.push(`size="${imageSize}"`);
@@ -223,6 +239,7 @@ export default function GoogerPage() {
       args.push(`duration="${videoDuration}"`);
     }
 
+    const engineArg = engine !== "auto" ? `engine="${engine}"` : "";
     let code = `from googer import Googer\n\n`;
 
     if (hasQueryBuilderOperators) {
@@ -240,15 +257,15 @@ export default function GoogerPage() {
       if (qbDateFrom && qbDateTo) qbParts.push(`.date_range("${qbDateFrom}", "${qbDateTo}")`);
 
       code += `q = (\n    ${qbParts.join("\n    ")}\n)\n\n`;
-      code += `with Googer() as g:\n    results = g.${methodName}(q`;
-      const extraArgs = args.slice(1);
+      code += `with Googer(${engineArg}) as g:\n    results = g.${methodName}(q`;
+      const extraArgs = args.slice(1).filter(a => !a.startsWith('engine='));
       if (extraArgs.length) code += `, ${extraArgs.join(", ")}`;
       code += `)`;
     } else {
-      code += `with Googer() as g:\n    results = g.${methodName}(${args.join(", ")})`;
+      code += `with Googer(${engineArg}) as g:\n    results = g.${methodName}(${args.filter(a => !a.startsWith('engine=')).join(", ")})`;
     }
 
-    code += `\n    for r in results:\n        print(r.title)`;
+    code += `\n    for r in results:\n        print(r.title, r.provider)`;
     return code;
   }
 
@@ -268,7 +285,7 @@ export default function GoogerPage() {
         <div>
           <h1 className="text-2xl font-bold text-text-primary">googer 데모</h1>
           <p className="text-sm text-text-secondary">
-            primp + lxml 기반의 빠르고 안전한 Google 검색 라이브러리
+            7개 엔진 지원 다중 검색 라이브러리 — 멀티 엔진, 자동 폴백, 캐싱 지원
           </p>
         </div>
         <div className="ml-auto flex items-center gap-2">
@@ -288,7 +305,7 @@ export default function GoogerPage() {
           >
             <Package size={14} /> PyPI
           </a>
-          <span className="badge-googer">v0.4.0</span>
+          <VersionBadge name="googer" fallback="0.7.0" className="badge-googer" />
         </div>
       </div>
 
@@ -355,6 +372,14 @@ export default function GoogerPage() {
         {/* Advanced Options */}
         {showAdvanced && (
           <div className="mt-3 grid grid-cols-1 gap-4 rounded-lg border border-border bg-bg-secondary p-4 sm:grid-cols-3">
+            <div>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">검색 엔진</label>
+              <select value={engine} onChange={(e) => setEngine(e.target.value)} className="select-field">
+                {ENGINES.map((eng) => (
+                  <option key={eng.value} value={eng.value}>{eng.label}</option>
+                ))}
+              </select>
+            </div>
             <div>
               <label className="mb-1 block text-xs font-medium text-text-secondary">지역</label>
               <select value={region} onChange={(e) => setRegion(e.target.value)} className="select-field">
@@ -662,8 +687,9 @@ function ResultCard({
         {result.href || result.url}
       </p>
       <p className="mt-2 text-sm text-text-secondary line-clamp-3">{result.body}</p>
-      {type === "news" && (
+      {(type === "news" || result.provider) && (
         <div className="mt-2 flex items-center gap-3 text-xs text-text-muted">
+          {result.provider && <span className="rounded bg-bg-secondary px-1.5 py-0.5 border border-border">{result.provider}</span>}
           {result.source && <span>{result.source}</span>}
           {result.date && <span>{result.date}</span>}
           {result.image && (

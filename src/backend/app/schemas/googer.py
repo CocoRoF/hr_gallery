@@ -1,6 +1,9 @@
-"""Pydantic schemas for googer API — v0.4.0."""
+"""Pydantic schemas for googer API — v0.7.0."""
 
 from pydantic import BaseModel, Field
+
+# Valid engine values
+VALID_ENGINES = {"auto", "multi", "duckduckgo", "brave", "google", "ecosia", "yahoo", "aol", "naver"}
 
 
 # ─── Request ───
@@ -13,6 +16,7 @@ class SearchRequest(BaseModel):
     timelimit: str | None = Field(None, description="시간 제한 (d/w/m/y)")
     max_results: int = Field(10, ge=1, le=50, description="최대 결과 수")
     page: int = Field(1, ge=1, description="페이지 번호 (text only)")
+    engine: str | None = Field(None, description="검색 엔진 (auto/multi/duckduckgo/brave/google/ecosia/yahoo/aol/naver)")
 
 
 class QueryBuilderRequest(BaseModel):

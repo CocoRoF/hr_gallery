@@ -59,6 +59,7 @@ export interface SearchParams {
   timelimit?: string | null;
   max_results?: number;
   page?: number;
+  engine?: string;
 }
 
 export interface ImageSearchParams extends SearchParams {

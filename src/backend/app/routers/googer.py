@@ -1,4 +1,4 @@
-"""googer search API router — v0.4.0 (Pure Python)."""
+"""googer search API router — v0.7.0."""
 
 from fastapi import APIRouter, HTTPException
 from googer import Googer, Query
@@ -12,13 +12,17 @@ from app.schemas.googer import (
     QueryBuilderRequest,
     SearchResponse,
     QueryBuilderResponse,
+    VALID_ENGINES,
 )
 
 router = APIRouter()
 
 
-def _get_client() -> Googer:
-    return Googer(timeout=settings.googer_timeout, max_retries=settings.googer_max_retries)
+def _get_client(engine: str | None = None) -> Googer:
+    kwargs: dict = dict(timeout=settings.googer_timeout, max_retries=settings.googer_max_retries)
+    if engine and engine in VALID_ENGINES:
+        kwargs["engine"] = engine
+    return Googer(**kwargs)
 
 
 def _empty_response(query: str, search_type: str) -> SearchResponse:
@@ -33,7 +37,7 @@ def _empty_response(query: str, search_type: str) -> SearchResponse:
 async def text_search(req: SearchRequest):
     """웹 텍스트 검색 — googer.search()"""
     try:
-        with _get_client() as g:
+        with _get_client(req.engine) as g:
             results = g.search(
                 req.query,
                 region=req.region,
@@ -61,7 +65,7 @@ async def text_search(req: SearchRequest):
 async def image_search(req: ImageSearchRequest):
     """이미지 검색 — googer.images()"""
     try:
-        with _get_client() as g:
+        with _get_client(req.engine) as g:
             results = g.images(
                 req.query,
                 region=req.region,
@@ -92,7 +96,7 @@ async def image_search(req: ImageSearchRequest):
 async def news_search(req: SearchRequest):
     """뉴스 검색 — googer.news()"""
     try:
-        with _get_client() as g:
+        with _get_client(req.engine) as g:
             results = g.news(
                 req.query,
                 region=req.region,
@@ -119,7 +123,7 @@ async def news_search(req: SearchRequest):
 async def video_search(req: VideoSearchRequest):
     """비디오 검색 — googer.videos()"""
     try:
-        with _get_client() as g:
+        with _get_client(req.engine) as g:
             results = g.videos(
                 req.query,
                 region=req.region,
