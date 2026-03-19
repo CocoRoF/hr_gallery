@@ -2,39 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+
+/* ── Custom Scrollbar (matching hr_blog2.0) ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(85, 85, 119, 0.35) transparent;
+}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(85, 85, 119, 0.35); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.5); }
+::-webkit-scrollbar-corner { background: transparent; }
 
 @layer base {
   body {
-    @apply bg-surface text-gray-100 antialiased;
+    @apply bg-bg-primary text-text-primary font-sans antialiased;
   }
 
   ::selection {
     @apply bg-accent/30;
-  }
-
-  ::-webkit-scrollbar {
-    @apply w-1.5;
-  }
-
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    @apply bg-surface-300 rounded-full hover:bg-surface-400;
   }
 }
 
 @layer components {
   /* ─── Cards ─── */
   .card {
-    @apply bg-surface-50/80 backdrop-blur-sm border border-surface-300/50 rounded-2xl p-6;
+    @apply bg-bg-card border border-border rounded-2xl p-6;
   }
 
   .card-hover {
-    @apply card transition-all duration-500
-           hover:border-accent/30 hover:shadow-xl hover:shadow-accent/5
+    @apply card transition-all duration-300
+           hover:bg-bg-card-hover hover:border-border-hover
            hover:-translate-y-1;
   }
 
@@ -42,55 +41,54 @@
     @apply bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] rounded-2xl p-6;
   }
 
-  /* ─── Buttons ─── */
+  /* ─── Buttons (matching blog PrimaryButton / GhostButton) ─── */
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
-           bg-accent text-white font-semibold rounded-xl
+           bg-accent text-white font-semibold rounded-full
            transition-all duration-300
-           hover:bg-accent-dark hover:shadow-lg hover:shadow-accent/25
+           hover:shadow-lg hover:shadow-accent/25
            active:scale-[0.97]
            disabled:opacity-40 disabled:cursor-not-allowed;
   }
 
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 px-5 py-2.5
-           bg-surface-200 text-gray-200 font-semibold rounded-xl
-           border border-surface-300/50
+           text-text-secondary font-semibold rounded-full
+           border border-border
            transition-all duration-300
-           hover:bg-surface-300 hover:border-surface-400
+           hover:border-border-hover hover:text-text-primary
            active:scale-[0.97];
   }
 
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2
-           text-gray-400 font-medium rounded-xl
-           transition-all duration-200
-           hover:bg-surface-200 hover:text-gray-100;
+           text-text-secondary font-medium rounded-lg
+           transition-colors duration-200
+           hover:text-text-primary;
   }
 
   .btn-googer {
-    @apply btn-primary bg-googer hover:bg-googer-dark hover:shadow-googer/25;
+    @apply btn-primary bg-googer hover:shadow-googer/25;
   }
 
   .btn-f2a {
-    @apply btn-primary bg-f2a hover:bg-f2a-dark hover:shadow-f2a/25;
+    @apply btn-primary bg-f2a hover:shadow-f2a/25;
   }
 
   .btn-contextifier {
-    @apply btn-primary bg-contextifier hover:bg-contextifier-dark hover:shadow-contextifier/25;
+    @apply btn-primary bg-contextifier hover:shadow-contextifier/25;
   }
 
   .btn-playleft {
-    @apply btn-primary bg-playleft hover:bg-playleft-dark hover:shadow-playleft/25;
+    @apply btn-primary bg-playleft hover:shadow-playleft/25;
   }
 
   /* ─── Inputs ─── */
   .input-field {
-    @apply w-full px-4 py-2.5 bg-surface-100 border border-surface-300/50 rounded-xl
-           text-gray-100 placeholder-surface-500
-           transition-all duration-300
-           focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/20
-           focus:bg-surface-50;
+    @apply w-full px-4 py-2.5 bg-bg-secondary border border-border rounded-lg
+           text-text-primary placeholder-text-muted
+           transition-all duration-200
+           focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/20;
   }
 
   .select-field {
@@ -126,35 +124,23 @@
     @apply badge bg-blue-500/10 text-blue-400 border border-blue-500/20;
   }
 
-  /* ─── Glow effects ─── */
-  .glow-googer {
-    box-shadow: 0 0 40px rgba(249, 115, 22, 0.15);
-  }
-
-  .glow-f2a {
-    box-shadow: 0 0 40px rgba(168, 85, 247, 0.15);
-  }
-
-  .glow-contextifier {
-    box-shadow: 0 0 40px rgba(16, 185, 129, 0.15);
-  }
-
-  .glow-playleft {
-    box-shadow: 0 0 40px rgba(245, 158, 11, 0.15);
-  }
-
-  /* ─── Section ─── */
+  /* ─── Section headings ─── */
   .section-title {
-    @apply text-3xl font-extrabold tracking-tight text-gray-100 sm:text-4xl;
+    @apply text-3xl font-extrabold tracking-tight text-text-primary sm:text-4xl;
   }
 
   .section-subtitle {
-    @apply mt-4 text-lg text-surface-500 max-w-2xl;
+    @apply mt-4 text-lg text-text-secondary max-w-2xl;
   }
 
   /* ─── Code Block ─── */
   .code-block {
-    @apply rounded-xl bg-surface-100/80 border border-surface-300/30 p-4 font-mono text-sm
+    @apply rounded-xl bg-bg-secondary border border-border p-4 font-mono text-sm
            overflow-x-auto;
+  }
+
+  /* ─── Gradient separator (matching blog) ─── */
+  .gradient-separator {
+    @apply h-px bg-gradient-to-r from-transparent via-border to-transparent;
   }
 }

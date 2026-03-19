@@ -1,94 +1,104 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, ExternalLink } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/", label: "Gallery" },
-  { href: "/googer", label: "googer", color: "text-googer-light" },
-  { href: "/f2a", label: "f2a", color: "text-f2a-light" },
-  { href: "/contextifier", label: "Contextifier", color: "text-contextifier-light" },
-  { href: "/playleft", label: "playwLeft", color: "text-playleft-light" },
+  { href: "/googer", label: "googer" },
+  { href: "/f2a", label: "f2a" },
+  { href: "/contextifier", label: "Contextifier" },
+  { href: "/playleft", label: "playwLeft" },
 ];
 
 export function Navbar() {
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/[0.06] bg-surface/70 backdrop-blur-2xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-f2a shadow-lg shadow-accent/20 transition-transform group-hover:scale-105">
-            <span className="text-lg font-black text-white">H</span>
-          </div>
-          <span className="text-lg font-bold text-gray-100 tracking-tight">
-            HR Gallery
-          </span>
-        </Link>
-
-        {/* Desktop nav */}
-        <nav className="hidden items-center gap-1 lg:flex">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`rounded-xl px-3.5 py-2 text-sm font-medium transition-all duration-200 hover:bg-white/[0.06] ${
-                item.color ? `text-gray-400 hover:${item.color}` : "text-gray-400 hover:text-gray-100"
-              }`}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <div className="ml-2 h-5 w-px bg-surface-300/50" />
-          <a
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 bg-bg-secondary border-b border-border">
+        <nav className="flex items-center justify-between px-8 py-3">
+          {/* Logo — matching blog style */}
+          <Link
             href="https://hrletsgo.me"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="ml-2 inline-flex items-center gap-1.5 rounded-xl bg-accent/10 px-3.5 py-2 text-sm font-semibold text-accent-light transition-all duration-200 hover:bg-accent/20 border border-accent/20"
+            className="flex items-center gap-2 text-text-primary font-semibold text-lg tracking-tight transition-colors hover:text-accent-light"
           >
-            hrletsgo.me
-            <ExternalLink size={13} />
-          </a>
-        </nav>
+            <span className="flex h-[22px] w-[22px] items-center justify-center rounded-sm bg-gradient-to-br from-accent to-accent-violet text-[11px] font-black text-white">
+              H
+            </span>
+            <span>AI Engineer Jang</span>
+          </Link>
 
-        {/* Mobile menu button */}
-        <button
-          className="lg:hidden rounded-xl p-2 text-gray-400 hover:bg-white/[0.06] transition-colors"
-          onClick={() => setMobileOpen(!mobileOpen)}
-        >
-          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
-
-      {/* Mobile nav */}
-      {mobileOpen && (
-        <nav className="border-t border-white/[0.06] bg-surface-50/95 backdrop-blur-2xl px-4 py-4 lg:hidden space-y-1">
-          {NAV_ITEMS.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="block rounded-xl px-4 py-2.5 text-sm font-medium text-gray-400 hover:bg-white/[0.06] hover:text-gray-100 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <div className="pt-2 border-t border-white/[0.06]">
-            <a
-              href="https://hrletsgo.me"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-accent-light hover:bg-accent/10 transition-colors"
-              onClick={() => setMobileOpen(false)}
-            >
-              hrletsgo.me
-              <ExternalLink size={13} />
-            </a>
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1">
+            {NAV_ITEMS.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+                    isActive
+                      ? "text-accent"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  {isActive && (
+                    <span className="absolute inset-0 rounded-lg bg-accent/10 border border-accent/20" />
+                  )}
+                  <span className="relative z-10">{item.label}</span>
+                </Link>
+              );
+            })}
           </div>
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden text-text-secondary hover:text-text-primary transition-colors p-1"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </nav>
+      </header>
+
+      {/* Mobile overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-40 bg-bg-primary/95 backdrop-blur-xl md:hidden">
+          <div className="flex flex-col items-center justify-center h-full gap-6">
+            {NAV_ITEMS.map((item) => {
+              const isActive =
+                item.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`text-3xl font-semibold transition-colors ${
+                    isActive
+                      ? "text-accent"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
       )}
-    </header>
+
+      {/* Spacer for fixed header */}
+      <div className="h-[52px]" />
+    </>
   );
 }

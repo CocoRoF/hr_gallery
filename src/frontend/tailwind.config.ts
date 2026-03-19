@@ -5,21 +5,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        surface: {
-          DEFAULT: "#0a0e14",
-          50: "#111820",
-          100: "#171e28",
-          200: "#1d2530",
-          300: "#2a3240",
-          400: "#3d4756",
-          500: "#5a6577",
-          600: "#8b95a5",
-        },
+        /* ── Match hr_blog2.0 design tokens ── */
+        "bg-primary": "#06060e",
+        "bg-secondary": "#0d0d1a",
+        "bg-card": "#111128",
+        "bg-card-hover": "#16163a",
+        border: "#1e1e3a",
+        "border-hover": "#2d2d5e",
+        "text-primary": "#e8e8f0",
+        "text-secondary": "#8888aa",
+        "text-muted": "#555577",
         accent: {
-          DEFAULT: "#3b82f6",
-          dark: "#1d4ed8",
-          light: "#60a5fa",
+          DEFAULT: "#6366f1",
+          light: "#818cf8",
+          cyan: "#22d3ee",
+          violet: "#a855f7",
         },
+        glow: "rgba(99, 102, 241, 0.15)",
+        /* ── Library brand colors ── */
         googer: {
           DEFAULT: "#f97316",
           dark: "#ea580c",
@@ -42,15 +45,15 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ['"Inter"', "system-ui", "sans-serif"],
-        mono: ['"JetBrains Mono"', '"Fira Code"', "monospace"],
+        sans: ['"Inter"', "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ['"JetBrains Mono"', "ui-monospace", "monospace"],
       },
       animation: {
         "gradient-x": "gradient-x 6s ease infinite",
         "float": "float 6s ease-in-out infinite",
         "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        "fade-in": "fadeIn 0.5s ease-out",
-        "slide-up": "slideUp 0.5s ease-out",
+        "fade-in": "fadeIn 0.6s cubic-bezier(0.25,0.46,0.45,0.94)",
+        "slide-up": "slideUp 0.6s cubic-bezier(0.25,0.46,0.45,0.94)",
       },
       keyframes: {
         "gradient-x": {

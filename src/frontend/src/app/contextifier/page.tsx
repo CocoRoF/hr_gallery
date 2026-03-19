@@ -111,7 +111,7 @@ export default function ContextifierPage() {
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-gray-300 transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text-primary transition-colors mb-8"
           >
             <ArrowLeft size={14} />
             Gallery로 돌아가기
@@ -125,16 +125,16 @@ export default function ContextifierPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-3">
-                    <h1 className="text-3xl font-black text-gray-100 sm:text-4xl">
+                    <h1 className="text-3xl font-black text-text-primary sm:text-4xl">
                       Contextifier
                     </h1>
                     <span className="badge-contextifier">v0.2.2</span>
                   </div>
-                  <p className="text-sm text-surface-500 mt-1">Document → AI Context</p>
+                  <p className="text-sm text-text-muted mt-1">Document → AI Context</p>
                 </div>
               </div>
 
-              <p className="text-lg text-gray-400 leading-relaxed">
+              <p className="text-lg text-text-secondary leading-relaxed">
                 다양한 문서 포맷을 AI가 이해할 수 있는 구조화된 텍스트로 변환합니다.
                 <br />
                 5단계 균일 파이프라인으로 모든 문서 포맷에 일관된 결과를 제공합니다.
@@ -170,15 +170,15 @@ export default function ContextifierPage() {
             {/* Quick Install */}
             <div className="lg:w-96">
               <div className="code-block">
-                <div className="text-surface-500 text-xs mb-2"># Installation</div>
-                <div className="text-gray-300">
-                  <span className="text-surface-500">$</span>{" "}
+                <div className="text-text-muted text-xs mb-2"># Installation</div>
+                <div className="text-text-primary">
+                  <span className="text-text-muted">$</span>{" "}
                   <span className="text-accent-light">pip install</span>{" "}
                   <span className="text-contextifier-light">contextifier</span>
                 </div>
-                <div className="mt-3 text-surface-500 text-xs mb-2"># or with uv</div>
-                <div className="text-gray-300">
-                  <span className="text-surface-500">$</span>{" "}
+                <div className="mt-3 text-text-muted text-xs mb-2"># or with uv</div>
+                <div className="text-text-primary">
+                  <span className="text-text-muted">$</span>{" "}
                   <span className="text-accent-light">uv add</span>{" "}
                   <span className="text-contextifier-light">contextifier</span>
                 </div>
@@ -189,7 +189,7 @@ export default function ContextifierPage() {
       </section>
 
       {/* ─── Features ─── */}
-      <section className="border-t border-white/[0.06] bg-surface-50/30">
+      <section className="border-t border-border bg-bg-secondary/30">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="section-title text-center">핵심 기능</h2>
           <p className="section-subtitle text-center mx-auto">
@@ -200,13 +200,13 @@ export default function ContextifierPage() {
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="card-glass group hover:bg-white/[0.05] transition-all duration-300"
+                className="card-glass group hover:bg-bg-card-hover transition-all duration-300"
               >
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-contextifier/10 text-contextifier-light mb-4 transition-transform group-hover:scale-110">
                   {f.icon}
                 </div>
-                <h3 className="text-base font-bold text-gray-100">{f.title}</h3>
-                <p className="mt-2 text-sm text-surface-500 leading-relaxed">{f.description}</p>
+                <h3 className="text-base font-bold text-text-primary">{f.title}</h3>
+                <p className="mt-2 text-sm text-text-muted leading-relaxed">{f.description}</p>
               </div>
             ))}
           </div>
@@ -214,7 +214,7 @@ export default function ContextifierPage() {
       </section>
 
       {/* ─── Supported Formats ─── */}
-      <section className="border-t border-white/[0.06]">
+      <section className="border-t border-border">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="section-title text-center">지원 포맷</h2>
           <p className="section-subtitle text-center mx-auto">
@@ -226,9 +226,9 @@ export default function ContextifierPage() {
               <div key={group.category} className="card">
                 <div className="flex items-center gap-2 mb-3">
                   <FileCode2 size={16} className="text-contextifier-light" />
-                  <h3 className="text-sm font-bold text-gray-200 uppercase tracking-wider">{group.category}</h3>
+                  <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">{group.category}</h3>
                 </div>
-                <p className="text-sm text-surface-500 font-mono">{group.formats}</p>
+                <p className="text-sm text-text-muted font-mono">{group.formats}</p>
               </div>
             ))}
           </div>
@@ -236,7 +236,7 @@ export default function ContextifierPage() {
       </section>
 
       {/* ─── Code Examples ─── */}
-      <section className="border-t border-white/[0.06] bg-surface-50/30">
+      <section className="border-t border-border bg-bg-secondary/30">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="section-title text-center">코드 예제</h2>
           <p className="section-subtitle text-center mx-auto">
@@ -246,11 +246,11 @@ export default function ContextifierPage() {
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
             {CODE_EXAMPLES.map((ex) => (
               <div key={ex.title} className="flex flex-col">
-                <h3 className="text-sm font-bold text-gray-200 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
                   <CheckCircle2 size={14} className="text-contextifier-light" />
                   {ex.title}
                 </h3>
-                <div className="code-block flex-1 text-xs leading-relaxed text-gray-400">
+                <div className="code-block flex-1 text-xs leading-relaxed text-text-secondary">
                   <pre className="whitespace-pre-wrap">{ex.code}</pre>
                 </div>
               </div>
@@ -260,7 +260,7 @@ export default function ContextifierPage() {
       </section>
 
       {/* ─── Pipeline ─── */}
-      <section className="border-t border-white/[0.06]">
+      <section className="border-t border-border">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="section-title text-center">5단계 균일 파이프라인</h2>
           <p className="section-subtitle text-center mx-auto">
@@ -274,10 +274,10 @@ export default function ContextifierPage() {
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-contextifier/15 text-contextifier-light text-sm font-bold">
                     {i + 1}
                   </div>
-                  <span className="text-sm font-medium text-gray-200">{step}</span>
+                  <span className="text-sm font-medium text-text-primary">{step}</span>
                 </div>
                 {i < 4 && (
-                  <span className="text-surface-400 hidden sm:block">→</span>
+                  <span className="text-text-muted hidden sm:block">→</span>
                 )}
               </div>
             ))}
@@ -286,14 +286,14 @@ export default function ContextifierPage() {
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="border-t border-white/[0.06] bg-surface-50/30">
+      <section className="border-t border-border bg-bg-secondary/30">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="card-glass text-center p-10">
             <Cpu size={32} className="mx-auto text-contextifier-light mb-4" />
-            <h2 className="text-xl font-bold text-gray-100 sm:text-2xl">
+            <h2 className="text-xl font-bold text-text-primary sm:text-2xl">
               Contextifier로 시작하세요
             </h2>
-            <p className="mt-3 text-surface-500 max-w-md mx-auto">
+            <p className="mt-3 text-text-muted max-w-md mx-auto">
               pip install contextifier로 설치하고, 문서를 AI 컨텍스트로 변환하세요.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">

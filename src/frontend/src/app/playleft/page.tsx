@@ -130,7 +130,7 @@ export default function PlaywLeftPage() {
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-gray-300 transition-colors mb-8"
+            className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text-primary transition-colors mb-8"
           >
             <ArrowLeft size={14} />
             Gallery로 돌아가기
@@ -144,16 +144,16 @@ export default function PlaywLeftPage() {
                 </div>
                 <div>
                   <div className="flex items-center gap-3">
-                    <h1 className="text-3xl font-black text-gray-100 sm:text-4xl">
+                    <h1 className="text-3xl font-black text-text-primary sm:text-4xl">
                       playwLeft
                     </h1>
                     <span className="badge-playleft">v0.1.0</span>
                   </div>
-                  <p className="text-sm text-surface-500 mt-1">Rust Browser Automation</p>
+                  <p className="text-sm text-text-muted mt-1">Rust Browser Automation</p>
                 </div>
               </div>
 
-              <p className="text-lg text-gray-400 leading-relaxed">
+              <p className="text-lg text-text-secondary leading-relaxed">
                 Rust로 구축된 에이전트 중심의 브라우저 자동화 툴킷.
                 <br />
                 Playwright의 대안으로, CDP 프로토콜 기반의 네이티브 성능을 제공합니다.
@@ -191,22 +191,22 @@ export default function PlaywLeftPage() {
             {/* Build from source */}
             <div className="lg:w-96">
               <div className="code-block">
-                <div className="text-surface-500 text-xs mb-2"># Build from source (Rust required)</div>
-                <div className="text-gray-300 space-y-1">
+                <div className="text-text-muted text-xs mb-2"># Build from source (Rust required)</div>
+                <div className="text-text-primary space-y-1">
                   <div>
-                    <span className="text-surface-500">$</span>{" "}
+                    <span className="text-text-muted">$</span>{" "}
                     <span className="text-accent-light">git clone</span>{" "}
                     <span className="text-playleft-light text-xs">https://github.com/CocoRoF/playwLeft</span>
                   </div>
                   <div>
-                    <span className="text-surface-500">$</span>{" "}
+                    <span className="text-text-muted">$</span>{" "}
                     <span className="text-accent-light">cd</span>{" "}
                     playwLeft
                   </div>
                   <div>
-                    <span className="text-surface-500">$</span>{" "}
+                    <span className="text-text-muted">$</span>{" "}
                     <span className="text-accent-light">maturin develop</span>{" "}
-                    <span className="text-surface-500">--release</span>
+                    <span className="text-text-muted">--release</span>
                   </div>
                 </div>
               </div>
@@ -216,7 +216,7 @@ export default function PlaywLeftPage() {
       </section>
 
       {/* ─── Features ─── */}
-      <section className="border-t border-white/[0.06] bg-surface-50/30">
+      <section className="border-t border-border bg-bg-secondary/30">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="section-title text-center">핵심 기능</h2>
           <p className="section-subtitle text-center mx-auto">
@@ -227,13 +227,13 @@ export default function PlaywLeftPage() {
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="card-glass group hover:bg-white/[0.05] transition-all duration-300"
+                className="card-glass group hover:bg-bg-card-hover transition-all duration-300"
               >
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-playleft/10 text-playleft-light mb-4 transition-transform group-hover:scale-110">
                   {f.icon}
                 </div>
-                <h3 className="text-base font-bold text-gray-100">{f.title}</h3>
-                <p className="mt-2 text-sm text-surface-500 leading-relaxed">{f.description}</p>
+                <h3 className="text-base font-bold text-text-primary">{f.title}</h3>
+                <p className="mt-2 text-sm text-text-muted leading-relaxed">{f.description}</p>
               </div>
             ))}
           </div>
@@ -241,7 +241,7 @@ export default function PlaywLeftPage() {
       </section>
 
       {/* ─── Architecture ─── */}
-      <section className="border-t border-white/[0.06]">
+      <section className="border-t border-border">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="section-title text-center">아키텍처</h2>
           <p className="section-subtitle text-center mx-auto">
@@ -255,14 +255,14 @@ export default function PlaywLeftPage() {
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className={`text-base font-bold ${arch.color}`}>{arch.layer}</h3>
-                      <p className="mt-1 text-sm text-surface-500">{arch.description}</p>
+                      <p className="mt-1 text-sm text-text-muted">{arch.description}</p>
                     </div>
                     <Layers size={20} className={arch.color} />
                   </div>
                 </div>
                 {i < ARCHITECTURE.length - 1 && (
                   <div className="flex justify-center py-1">
-                    <div className="w-px h-4 bg-surface-300" />
+                    <div className="w-px h-4 bg-border" />
                   </div>
                 )}
               </div>
@@ -272,7 +272,7 @@ export default function PlaywLeftPage() {
       </section>
 
       {/* ─── Code Examples ─── */}
-      <section className="border-t border-white/[0.06] bg-surface-50/30">
+      <section className="border-t border-border bg-bg-secondary/30">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="section-title text-center">코드 예제</h2>
           <p className="section-subtitle text-center mx-auto">
@@ -282,11 +282,11 @@ export default function PlaywLeftPage() {
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
             {CODE_EXAMPLES.map((ex) => (
               <div key={ex.title} className="flex flex-col">
-                <h3 className="text-sm font-bold text-gray-200 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
                   <CheckCircle2 size={14} className="text-playleft-light" />
                   {ex.title}
                 </h3>
-                <div className="code-block flex-1 text-xs leading-relaxed text-gray-400">
+                <div className="code-block flex-1 text-xs leading-relaxed text-text-secondary">
                   <pre className="whitespace-pre-wrap">{ex.code}</pre>
                 </div>
               </div>
@@ -296,7 +296,7 @@ export default function PlaywLeftPage() {
       </section>
 
       {/* ─── Comparison ─── */}
-      <section className="border-t border-white/[0.06]">
+      <section className="border-t border-border">
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <h2 className="section-title text-center">Playwright와의 차이점</h2>
 
@@ -304,10 +304,10 @@ export default function PlaywLeftPage() {
             <div className="card overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-white/[0.06]">
-                    <th className="text-left py-3 px-4 text-surface-500 font-semibold">특성</th>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-3 px-4 text-text-muted font-semibold">특성</th>
                     <th className="text-center py-3 px-4 text-playleft-light font-semibold">playwLeft</th>
-                    <th className="text-center py-3 px-4 text-surface-500 font-semibold">Playwright</th>
+                    <th className="text-center py-3 px-4 text-text-muted font-semibold">Playwright</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/[0.04]">
@@ -320,9 +320,9 @@ export default function PlaywLeftPage() {
                     ["상태", "Alpha (v0.1.0)", "Stable"],
                   ].map(([feature, pw, pl]) => (
                     <tr key={feature}>
-                      <td className="py-3 px-4 text-gray-300 font-medium">{feature}</td>
+                      <td className="py-3 px-4 text-text-primary font-medium">{feature}</td>
                       <td className="py-3 px-4 text-center text-playleft-light">{pw}</td>
-                      <td className="py-3 px-4 text-center text-surface-500">{pl}</td>
+                      <td className="py-3 px-4 text-center text-text-muted">{pl}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -333,14 +333,14 @@ export default function PlaywLeftPage() {
       </section>
 
       {/* ─── CTA ─── */}
-      <section className="border-t border-white/[0.06] bg-surface-50/30">
+      <section className="border-t border-border bg-bg-secondary/30">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="card-glass text-center p-10">
             <Gauge size={32} className="mx-auto text-playleft-light mb-4" />
-            <h2 className="text-xl font-bold text-gray-100 sm:text-2xl">
+            <h2 className="text-xl font-bold text-text-primary sm:text-2xl">
               playwLeft에 기여하세요
             </h2>
-            <p className="mt-3 text-surface-500 max-w-md mx-auto">
+            <p className="mt-3 text-text-muted max-w-md mx-auto">
               playwLeft는 현재 Alpha 단계입니다. 피드백과 기여를 환영합니다.
             </p>
             <div className="mt-6 flex flex-wrap items-center justify-center gap-3">

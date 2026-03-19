@@ -255,7 +255,7 @@ export default function GoogerPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
       {/* Back Link */}
-      <a href="/" className="mb-6 inline-flex items-center gap-1.5 text-sm text-surface-500 hover:text-gray-300 transition-colors">
+      <a href="/" className="mb-6 inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text-primary transition-colors">
         <ArrowLeft size={16} />
         갤러리로 돌아가기
       </a>
@@ -266,8 +266,8 @@ export default function GoogerPage() {
           <Search size={24} />
         </div>
         <div>
-          <h1 className="text-2xl font-bold text-gray-100">googer 데모</h1>
-          <p className="text-sm text-gray-400">
+          <h1 className="text-2xl font-bold text-text-primary">googer 데모</h1>
+          <p className="text-sm text-text-secondary">
             primp + lxml 기반의 빠르고 안전한 Google 검색 라이브러리
           </p>
         </div>
@@ -276,7 +276,7 @@ export default function GoogerPage() {
             href="https://github.com/CocoRoF/googer"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-surface-300 px-3 py-1.5 text-xs text-gray-400 hover:border-googer/50 hover:text-googer-light transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs text-text-secondary hover:border-googer/50 hover:text-googer-light transition-colors"
           >
             <Github size={14} /> GitHub
           </a>
@@ -284,7 +284,7 @@ export default function GoogerPage() {
             href="https://pypi.org/project/googer/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-surface-300 px-3 py-1.5 text-xs text-gray-400 hover:border-googer/50 hover:text-googer-light transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs text-text-secondary hover:border-googer/50 hover:text-googer-light transition-colors"
           >
             <Package size={14} /> PyPI
           </a>
@@ -293,7 +293,7 @@ export default function GoogerPage() {
       </div>
 
       {/* Search Tabs */}
-      <div className="mt-8 flex gap-1 rounded-lg bg-surface-50 p-1">
+      <div className="mt-8 flex gap-1 rounded-lg bg-bg-secondary p-1">
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -301,7 +301,7 @@ export default function GoogerPage() {
             className={`flex flex-1 items-center justify-center gap-2 rounded-md px-3 py-2.5 text-sm font-medium transition-all ${
               searchType === tab.id
                 ? "bg-googer/15 text-googer-light"
-                : "text-gray-400 hover:bg-surface-200 hover:text-gray-200"
+                : "text-text-secondary hover:bg-bg-card hover:text-text-primary"
             }`}
           >
             {tab.icon}
@@ -316,7 +316,7 @@ export default function GoogerPage() {
           <div className="relative flex-1">
             <Search
               size={18}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-surface-500"
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted"
             />
             <input
               type="text"
@@ -337,7 +337,7 @@ export default function GoogerPage() {
           <button
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className="flex items-center gap-1.5 text-xs text-surface-500 hover:text-gray-400"
+            className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text-secondary"
           >
             <Settings2 size={14} />
             고급 옵션 {showAdvanced ? "▲" : "▼"}
@@ -345,7 +345,7 @@ export default function GoogerPage() {
           <button
             type="button"
             onClick={() => setShowQueryBuilder(!showQueryBuilder)}
-            className="flex items-center gap-1.5 text-xs text-surface-500 hover:text-gray-400"
+            className="flex items-center gap-1.5 text-xs text-text-muted hover:text-text-secondary"
           >
             <Wrench size={14} />
             Query Builder {showQueryBuilder ? "▲" : "▼"}
@@ -354,9 +354,9 @@ export default function GoogerPage() {
 
         {/* Advanced Options */}
         {showAdvanced && (
-          <div className="mt-3 grid grid-cols-1 gap-4 rounded-lg border border-surface-300 bg-surface-50 p-4 sm:grid-cols-3">
+          <div className="mt-3 grid grid-cols-1 gap-4 rounded-lg border border-border bg-bg-secondary p-4 sm:grid-cols-3">
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-400">지역</label>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">지역</label>
               <select value={region} onChange={(e) => setRegion(e.target.value)} className="select-field">
                 {REGIONS.map((r) => (
                   <option key={r.value} value={r.value}>{r.label}</option>
@@ -364,7 +364,7 @@ export default function GoogerPage() {
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-400">기간</label>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">기간</label>
               <select value={timelimit} onChange={(e) => setTimelimit(e.target.value)} className="select-field">
                 {TIME_LIMITS.map((t) => (
                   <option key={t.value} value={t.value}>{t.label}</option>
@@ -372,7 +372,7 @@ export default function GoogerPage() {
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-400">세이프서치</label>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">세이프서치</label>
               <select value={safesearch} onChange={(e) => setSafesearch(e.target.value)} className="select-field">
                 {SAFESEARCH_OPTIONS.map((s) => (
                   <option key={s.value} value={s.value}>{s.label}</option>
@@ -380,7 +380,7 @@ export default function GoogerPage() {
               </select>
             </div>
             <div>
-              <label className="mb-1 block text-xs font-medium text-gray-400">결과 수</label>
+              <label className="mb-1 block text-xs font-medium text-text-secondary">결과 수</label>
               <input
                 type="number"
                 value={maxResults}
@@ -395,7 +395,7 @@ export default function GoogerPage() {
             {searchType === "images" && (
               <>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-400">이미지 크기</label>
+                  <label className="mb-1 block text-xs font-medium text-text-secondary">이미지 크기</label>
                   <select value={imageSize} onChange={(e) => setImageSize(e.target.value)} className="select-field">
                     {IMAGE_SIZES.map((s) => (
                       <option key={s.value} value={s.value}>{s.label}</option>
@@ -403,7 +403,7 @@ export default function GoogerPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-400">색상</label>
+                  <label className="mb-1 block text-xs font-medium text-text-secondary">색상</label>
                   <select value={imageColor} onChange={(e) => setImageColor(e.target.value)} className="select-field">
                     {IMAGE_COLORS.map((c) => (
                       <option key={c.value} value={c.value}>{c.label}</option>
@@ -411,7 +411,7 @@ export default function GoogerPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-gray-400">유형</label>
+                  <label className="mb-1 block text-xs font-medium text-text-secondary">유형</label>
                   <select value={imageType} onChange={(e) => setImageType(e.target.value)} className="select-field">
                     {IMAGE_TYPES.map((t) => (
                       <option key={t.value} value={t.value}>{t.label}</option>
@@ -424,7 +424,7 @@ export default function GoogerPage() {
             {/* Video-specific options */}
             {searchType === "videos" && (
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-400">영상 길이</label>
+                <label className="mb-1 block text-xs font-medium text-text-secondary">영상 길이</label>
                 <select value={videoDuration} onChange={(e) => setVideoDuration(e.target.value)} className="select-field">
                   {VIDEO_DURATIONS.map((d) => (
                     <option key={d.value} value={d.value}>{d.label}</option>
@@ -437,9 +437,9 @@ export default function GoogerPage() {
 
         {/* Query Builder Panel */}
         {showQueryBuilder && (
-          <div className="mt-3 rounded-lg border border-surface-300 bg-surface-50 p-4">
+          <div className="mt-3 rounded-lg border border-border bg-bg-secondary p-4">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-300">Google 고급 검색 연산자</h3>
+              <h3 className="text-sm font-medium text-text-primary">Google 고급 검색 연산자</h3>
               <button
                 type="button"
                 onClick={handleBuildQuery}
@@ -460,7 +460,7 @@ export default function GoogerPage() {
               <QbField label="OR" value={qbOrTerm} onChange={setQbOrTerm} placeholder="대안 검색어" />
               <QbField label="related:" value={qbRelated} onChange={setQbRelated} placeholder="관련 사이트 URL" />
               <div className="sm:col-span-2 lg:col-span-3">
-                <label className="mb-1 block text-xs font-medium text-gray-500">date_range</label>
+                <label className="mb-1 block text-xs font-medium text-text-muted">date_range</label>
                 <div className="flex gap-2">
                   <input
                     type="date"
@@ -468,7 +468,7 @@ export default function GoogerPage() {
                     onChange={(e) => setQbDateFrom(e.target.value)}
                     className="input-field flex-1 text-xs"
                   />
-                  <span className="flex items-center text-xs text-gray-500">~</span>
+                  <span className="flex items-center text-xs text-text-muted">~</span>
                   <input
                     type="date"
                     value={qbDateTo}
@@ -479,8 +479,8 @@ export default function GoogerPage() {
               </div>
             </div>
             {builtQuery && (
-              <div className="mt-3 rounded-md bg-surface-200 p-2">
-                <p className="text-xs text-gray-500">빌드된 쿼리:</p>
+              <div className="mt-3 rounded-md bg-bg-card p-2">
+                <p className="text-xs text-text-muted">빌드된 쿼리:</p>
                 <p className="mt-1 font-mono text-sm text-googer-light">{builtQuery}</p>
               </div>
             )}
@@ -489,12 +489,12 @@ export default function GoogerPage() {
       </form>
 
       {/* API Code Preview */}
-      <div className="mt-6 rounded-lg border border-surface-300 bg-surface-100 p-4">
-        <div className="flex items-center gap-2 text-xs font-medium text-surface-500">
+      <div className="mt-6 rounded-lg border border-border bg-bg-secondary p-4">
+        <div className="flex items-center gap-2 text-xs font-medium text-text-muted">
           <Code2 size={14} />
           Python 코드 미리보기
         </div>
-        <pre className="mt-2 overflow-x-auto font-mono text-sm text-gray-400">
+        <pre className="mt-2 overflow-x-auto font-mono text-sm text-text-secondary">
           <code>{getCodePreview()}</code>
         </pre>
       </div>
@@ -514,9 +514,9 @@ export default function GoogerPage() {
       {resultMeta && (
         <div className="mt-8">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-100">
+            <h2 className="text-lg font-semibold text-text-primary">
               검색 결과{" "}
-              <span className="text-sm font-normal text-gray-400">
+              <span className="text-sm font-normal text-text-secondary">
                 ({resultMeta.count}건)
               </span>
             </h2>
@@ -529,10 +529,10 @@ export default function GoogerPage() {
                 <ResultCard key={i} result={r} type={searchType} />
               ))
             ) : (
-              <div className="flex flex-col items-center gap-2 rounded-lg border border-surface-300 bg-surface-50 py-12 text-center">
-                <Search size={32} className="text-surface-500" />
-                <p className="text-sm text-gray-400">검색 결과가 없습니다.</p>
-                <p className="text-xs text-surface-500">
+              <div className="flex flex-col items-center gap-2 rounded-lg border border-border bg-bg-secondary py-12 text-center">
+                <Search size={32} className="text-text-muted" />
+                <p className="text-sm text-text-secondary">검색 결과가 없습니다.</p>
+                <p className="text-xs text-text-muted">
                   다른 검색어나 옵션으로 다시 시도해보세요.
                 </p>
               </div>
@@ -559,7 +559,7 @@ function QbField({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-xs font-medium text-gray-500">{label}</label>
+      <label className="mb-1 block text-xs font-medium text-text-muted">{label}</label>
       <input
         type="text"
         value={value}
@@ -591,10 +591,10 @@ function ResultCard({
           />
         )}
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-medium text-gray-100">
+          <h3 className="truncate font-medium text-text-primary">
             {result.title}
           </h3>
-          <p className="mt-1 text-xs text-surface-500">
+          <p className="mt-1 text-xs text-text-muted">
             {result.width && result.height ? `${result.width}×${result.height}` : ""}{result.source ? ` · ${result.source}` : ""}
           </p>
           <a
@@ -622,11 +622,11 @@ function ResultCard({
             />
           )}
           <div className="min-w-0 flex-1">
-            <h3 className="font-medium text-gray-100">{result.title}</h3>
-            <p className="mt-1 text-sm text-gray-400 line-clamp-2">
+            <h3 className="font-medium text-text-primary">{result.title}</h3>
+            <p className="mt-1 text-sm text-text-secondary line-clamp-2">
               {result.body}
             </p>
-            <div className="mt-2 flex items-center gap-3 text-xs text-surface-500">
+            <div className="mt-2 flex items-center gap-3 text-xs text-text-muted">
               {result.duration && <span>{result.duration}</span>}
               {result.source && <span>{result.source}</span>}
               {result.date && <span>{result.date}</span>}
@@ -661,9 +661,9 @@ function ResultCard({
       <p className="mt-1 text-xs text-green-400/70 truncate">
         {result.href || result.url}
       </p>
-      <p className="mt-2 text-sm text-gray-400 line-clamp-3">{result.body}</p>
+      <p className="mt-2 text-sm text-text-secondary line-clamp-3">{result.body}</p>
       {type === "news" && (
-        <div className="mt-2 flex items-center gap-3 text-xs text-surface-500">
+        <div className="mt-2 flex items-center gap-3 text-xs text-text-muted">
           {result.source && <span>{result.source}</span>}
           {result.date && <span>{result.date}</span>}
           {result.image && (

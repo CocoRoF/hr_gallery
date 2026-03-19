@@ -1,97 +1,50 @@
-import { ExternalLink } from "lucide-react";
-
-const LIBRARIES = [
-  { name: "googer", version: "0.4.1", badge: "badge-googer", github: "https://github.com/CocoRoF/googer" },
-  { name: "f2a", version: "1.1.1", badge: "badge-f2a", github: "https://github.com/CocoRoF/f2a" },
-  { name: "Contextifier", version: "0.2.2", badge: "badge-contextifier", github: "https://github.com/CocoRoF/Contextifier" },
-  { name: "playwLeft", version: "0.1.0", badge: "badge-playleft", github: "https://github.com/CocoRoF/playwLeft" },
-];
+import Link from "next/link";
+import { Github } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/[0.06] bg-surface-50/50 backdrop-blur-sm">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-f2a">
-                <span className="text-sm font-black text-white">H</span>
-              </div>
-              <span className="text-lg font-bold text-gray-100">HR Gallery</span>
-            </div>
-            <p className="mt-3 text-sm text-surface-500 leading-relaxed">
-              CocoRoF 오픈소스 라이브러리 갤러리.
-              <br />
-              인터랙티브 데모와 문서를 제공합니다.
-            </p>
-            <a
-              href="https://hrletsgo.me"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-3 inline-flex items-center gap-1.5 text-sm font-medium text-accent-light hover:text-accent transition-colors"
-            >
-              hrletsgo.me <ExternalLink size={12} />
-            </a>
-          </div>
+    <footer className="border-t border-border bg-bg-secondary/50">
+      <div className="mx-auto max-w-7xl px-6 py-6 flex items-center gap-4">
+        {/* Brand — links to main site */}
+        <Link
+          href="https://hrletsgo.me"
+          className="flex items-center gap-1.5 text-text-primary font-semibold text-sm tracking-tight hover:text-accent-light transition-colors shrink-0"
+        >
+          <span className="flex h-4 w-4 items-center justify-center rounded-sm bg-gradient-to-br from-accent to-accent-violet text-[8px] font-black text-white">
+            H
+          </span>
+          <span>AI Engineer Jang</span>
+        </Link>
 
-          {/* Libraries */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Libraries</h3>
-            <div className="flex flex-wrap gap-2">
-              {LIBRARIES.map((lib) => (
-                <a
-                  key={lib.name}
-                  href={lib.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${lib.badge} hover:opacity-80 transition-opacity cursor-pointer`}
-                >
-                  {lib.name} v{lib.version}
-                </a>
-              ))}
-            </div>
-          </div>
+        <span className="text-xs text-text-muted">
+          &copy; {new Date().getFullYear()} Haryeom Jang. All rights reserved.
+        </span>
 
-          {/* Links */}
-          <div>
-            <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-4">Links</h3>
-            <div className="space-y-2">
-              <a
-                href="https://github.com/CocoRoF"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm text-surface-500 hover:text-gray-300 transition-colors"
-              >
-                GitHub <ExternalLink size={11} />
-              </a>
-              <a
-                href="https://pypi.org/user/CocoRoF/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm text-surface-500 hover:text-gray-300 transition-colors"
-              >
-                PyPI <ExternalLink size={11} />
-              </a>
-              <a
-                href="https://hrletsgo.me"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm text-surface-500 hover:text-gray-300 transition-colors"
-              >
-                Main Site <ExternalLink size={11} />
-              </a>
-            </div>
-          </div>
-        </div>
+        <div className="flex-1" />
 
-        <div className="mt-10 pt-6 border-t border-white/[0.04] flex flex-col items-center justify-between gap-3 sm:flex-row">
-          <p className="text-xs text-surface-500">
-            © 2026 CocoRoF — HR Gallery
-          </p>
-          <p className="text-xs text-surface-500">
-            Built with Next.js · FastAPI · Tailwind CSS
-          </p>
+        <div className="flex items-center gap-2.5">
+          <a
+            href="https://github.com/CocoRoF"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted hover:text-text-primary transition-colors"
+            aria-label="GitHub"
+          >
+            <Github className="h-4 w-4" />
+          </a>
+          <a
+            href="https://huggingface.co/CocoRoF"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted hover:text-text-primary transition-colors"
+            aria-label="Hugging Face"
+          >
+            <svg viewBox="0 0 120 120" className="h-4 w-4 fill-current" aria-hidden="true">
+              <path d="M37.6 62.7a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Zm44.8 0a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9Z" />
+              <path d="M60 10a50 50 0 1 0 0 100 50 50 0 0 0 0-100Zm0 90a40 40 0 1 1 0-80 40 40 0 0 1 0 80Z" />
+              <path d="M38 74s6 12 22 12 22-12 22-12" strokeWidth="4" stroke="currentColor" fill="none" strokeLinecap="round" />
+            </svg>
+          </a>
         </div>
       </div>
     </footer>
