@@ -1,10 +1,20 @@
 """HR Gallery — FastAPI Backend"""
 
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.routers import googer, f2a
+
+# ─── Logging ───
+# Enable googer library logs so search diagnostics are visible in Docker logs
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(name)s %(levelname)s %(message)s",
+)
+logging.getLogger("googer").setLevel(logging.INFO)
 
 app = FastAPI(
     title="HR Gallery API",

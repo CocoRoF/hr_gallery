@@ -1,4 +1,7 @@
-"""googer search API router — v0.7.0."""
+"""googer search API router — v0.7.3."""
+
+import logging
+import time
 
 from fastapi import APIRouter, HTTPException
 from googer import Googer, Query
@@ -15,6 +18,7 @@ from app.schemas.googer import (
     VALID_ENGINES,
 )
 
+logger = logging.getLogger("googer.router")
 router = APIRouter()
 
 
@@ -27,6 +31,7 @@ def _get_client(engine: str | None = None) -> Googer:
 
 def _empty_response(query: str, search_type: str) -> SearchResponse:
     """NoResultsException 발생 시 빈 결과 반환."""
+    logger.warning("No results for query=%r type=%s", query, search_type)
     return SearchResponse(query=query, type=search_type, count=0, results=[])
 
 
@@ -36,6 +41,8 @@ def _empty_response(query: str, search_type: str) -> SearchResponse:
 @router.post("/search", response_model=SearchResponse)
 async def text_search(req: SearchRequest):
     """웹 텍스트 검색 — googer.search()"""
+    t0 = time.monotonic()
+    logger.info("text_search: query=%r engine=%s region=%s", req.query, req.engine, req.region)
     try:
         with _get_client(req.engine) as g:
             results = g.search(
@@ -46,6 +53,14 @@ async def text_search(req: SearchRequest):
                 max_results=req.max_results,
                 page=req.page,
             )
+        elapsed = time.monotonic() - t0
+        logger.info(
+            "text_search: query=%r returned %d results in %.2fs (provider=%s)",
+            req.query,
+            len(results),
+            elapsed,
+            results[0].provider if results else "none",
+        )
         return SearchResponse(
             query=req.query,
             type="text",
@@ -53,8 +68,12 @@ async def text_search(req: SearchRequest):
             results=[r.to_dict() for r in results],
         )
     except NoResultsException:
+        elapsed = time.monotonic() - t0
+        logger.warning("text_search: NoResultsException for query=%r after %.2fs", req.query, elapsed)
         return _empty_response(req.query, "text")
     except GoogerException as e:
+        elapsed = time.monotonic() - t0
+        logger.error("text_search: GoogerException for query=%r after %.2fs: %s", req.query, elapsed, e)
         raise HTTPException(status_code=502, detail=str(e)) from e
 
 
@@ -64,6 +83,8 @@ async def text_search(req: SearchRequest):
 @router.post("/images", response_model=SearchResponse)
 async def image_search(req: ImageSearchRequest):
     """이미지 검색 — googer.images()"""
+    t0 = time.monotonic()
+    logger.info("image_search: query=%r engine=%s", req.query, req.engine)
     try:
         with _get_client(req.engine) as g:
             results = g.images(
@@ -77,6 +98,8 @@ async def image_search(req: ImageSearchRequest):
                 image_type=req.image_type,
                 license_type=req.license_type,
             )
+        elapsed = time.monotonic() - t0
+        logger.info("image_search: query=%r returned %d results in %.2fs", req.query, len(results), elapsed)
         return SearchResponse(
             query=req.query,
             type="images",
@@ -84,8 +107,12 @@ async def image_search(req: ImageSearchRequest):
             results=[r.to_dict() for r in results],
         )
     except NoResultsException:
+        elapsed = time.monotonic() - t0
+        logger.warning("image_search: NoResultsException for query=%r after %.2fs", req.query, elapsed)
         return _empty_response(req.query, "images")
     except GoogerException as e:
+        elapsed = time.monotonic() - t0
+        logger.error("image_search: GoogerException for query=%r after %.2fs: %s", req.query, elapsed, e)
         raise HTTPException(status_code=502, detail=str(e)) from e
 
 
@@ -95,6 +122,8 @@ async def image_search(req: ImageSearchRequest):
 @router.post("/news", response_model=SearchResponse)
 async def news_search(req: SearchRequest):
     """뉴스 검색 — googer.news()"""
+    t0 = time.monotonic()
+    logger.info("news_search: query=%r engine=%s", req.query, req.engine)
     try:
         with _get_client(req.engine) as g:
             results = g.news(
@@ -104,6 +133,8 @@ async def news_search(req: SearchRequest):
                 timelimit=req.timelimit,
                 max_results=req.max_results,
             )
+        elapsed = time.monotonic() - t0
+        logger.info("news_search: query=%r returned %d results in %.2fs", req.query, len(results), elapsed)
         return SearchResponse(
             query=req.query,
             type="news",
@@ -111,8 +142,12 @@ async def news_search(req: SearchRequest):
             results=[r.to_dict() for r in results],
         )
     except NoResultsException:
+        elapsed = time.monotonic() - t0
+        logger.warning("news_search: NoResultsException for query=%r after %.2fs", req.query, elapsed)
         return _empty_response(req.query, "news")
     except GoogerException as e:
+        elapsed = time.monotonic() - t0
+        logger.error("news_search: GoogerException for query=%r after %.2fs: %s", req.query, elapsed, e)
         raise HTTPException(status_code=502, detail=str(e)) from e
 
 
@@ -122,6 +157,8 @@ async def news_search(req: SearchRequest):
 @router.post("/videos", response_model=SearchResponse)
 async def video_search(req: VideoSearchRequest):
     """비디오 검색 — googer.videos()"""
+    t0 = time.monotonic()
+    logger.info("video_search: query=%r engine=%s", req.query, req.engine)
     try:
         with _get_client(req.engine) as g:
             results = g.videos(
@@ -132,6 +169,8 @@ async def video_search(req: VideoSearchRequest):
                 max_results=req.max_results,
                 duration=req.duration,
             )
+        elapsed = time.monotonic() - t0
+        logger.info("video_search: query=%r returned %d results in %.2fs", req.query, len(results), elapsed)
         return SearchResponse(
             query=req.query,
             type="videos",
@@ -139,8 +178,12 @@ async def video_search(req: VideoSearchRequest):
             results=[r.to_dict() for r in results],
         )
     except NoResultsException:
+        elapsed = time.monotonic() - t0
+        logger.warning("video_search: NoResultsException for query=%r after %.2fs", req.query, elapsed)
         return _empty_response(req.query, "videos")
     except GoogerException as e:
+        elapsed = time.monotonic() - t0
+        logger.error("video_search: GoogerException for query=%r after %.2fs: %s", req.query, elapsed, e)
         raise HTTPException(status_code=502, detail=str(e)) from e
 
 
