@@ -6,9 +6,9 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-bg-secondary/50">
       <div className="mx-auto max-w-7xl px-6 py-6 flex items-center gap-4">
-        {/* Brand — links to main site */}
+        {/* Brand */}
         <Link
-          href="https://hrletsgo.me"
+          href="/"
           className="flex items-center gap-1.5 text-text-primary font-semibold text-sm tracking-tight hover:text-accent-light transition-colors shrink-0"
         >
           <Image src="/favicon.png" alt="AI Engineer Jang" width={16} height={16} className="rounded-sm" />

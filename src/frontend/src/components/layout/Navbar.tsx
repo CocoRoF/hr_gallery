@@ -30,7 +30,7 @@ export function Navbar() {
         <nav className="flex items-center justify-between px-8 py-3">
           {/* Logo */}
           <Link
-            href="https://hrletsgo.me"
+            href="/"
             className="flex items-center gap-2 text-text-primary font-semibold text-lg tracking-tight transition-colors hover:text-accent-light"
           >
             <Image src="/favicon.png" alt="AI Engineer Jang" width={22} height={22} className="rounded-sm" />
