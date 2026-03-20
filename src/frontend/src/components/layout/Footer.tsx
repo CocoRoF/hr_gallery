@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Github } from "lucide-react";
 
 export function Footer() {
@@ -10,9 +11,7 @@ export function Footer() {
           href="https://hrletsgo.me"
           className="flex items-center gap-1.5 text-text-primary font-semibold text-sm tracking-tight hover:text-accent-light transition-colors shrink-0"
         >
-          <span className="flex h-4 w-4 items-center justify-center rounded-sm bg-gradient-to-br from-accent to-accent-violet text-[8px] font-black text-white">
-            H
-          </span>
+          <Image src="/favicon.png" alt="AI Engineer Jang" width={16} height={16} className="rounded-sm" />
           <span>AI Engineer Jang</span>
         </Link>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
@@ -26,9 +27,7 @@ export function Navbar() {
             href="https://hrletsgo.me"
             className="flex items-center gap-2 text-text-primary font-semibold text-lg tracking-tight transition-colors hover:text-accent-light"
           >
-            <span className="flex h-[22px] w-[22px] items-center justify-center rounded-sm bg-gradient-to-br from-accent to-accent-violet text-[11px] font-black text-white">
-              H
-            </span>
+            <Image src="/favicon.png" alt="AI Engineer Jang" width={22} height={22} className="rounded-sm" />
             <span>AI Engineer Jang</span>
           </Link>
 
