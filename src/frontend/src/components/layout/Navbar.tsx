@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -20,9 +21,14 @@ export function Navbar() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-bg-secondary border-b border-border">
+      <motion.header
+        className="fixed top-0 left-0 right-0 z-50 bg-bg-secondary border-b border-border"
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
+      >
         <nav className="flex items-center justify-between px-8 py-3">
-          {/* Logo — matching blog style */}
+          {/* Logo */}
           <Link
             href="https://hrletsgo.me"
             className="flex items-center gap-2 text-text-primary font-semibold text-lg tracking-tight transition-colors hover:text-accent-light"
@@ -49,7 +55,15 @@ export function Navbar() {
                   }`}
                 >
                   {isActive && (
-                    <span className="absolute inset-0 rounded-lg bg-accent/10 border border-accent/20" />
+                    <motion.div
+                      layoutId="nav-active"
+                      className="absolute inset-0 rounded-lg bg-accent/10 border border-accent/20"
+                      transition={{
+                        type: "spring",
+                        stiffness: 350,
+                        damping: 30,
+                      }}
+                    />
                   )}
                   <span className="relative z-10">{item.label}</span>
                 </Link>
@@ -66,35 +80,50 @@ export function Navbar() {
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </nav>
-      </header>
+      </motion.header>
 
       {/* Mobile overlay */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-40 bg-bg-primary/95 backdrop-blur-xl md:hidden">
-          <div className="flex flex-col items-center justify-center h-full gap-6">
-            {NAV_ITEMS.map((item) => {
-              const isActive =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href);
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`text-3xl font-semibold transition-colors ${
-                    isActive
-                      ? "text-accent"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            className="fixed inset-0 z-40 bg-bg-primary/95 backdrop-blur-xl md:hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <div className="flex flex-col items-center justify-center h-full gap-6">
+              {NAV_ITEMS.map((item, i) => {
+                const isActive =
+                  item.href === "/"
+                    ? pathname === "/"
+                    : pathname.startsWith(item.href);
+                return (
+                  <motion.div
+                    key={item.href}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{ delay: i * 0.05 }}
+                  >
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className={`text-3xl font-semibold transition-colors ${
+                        isActive
+                          ? "text-accent"
+                          : "text-text-secondary hover:text-text-primary"
+                      }`}
+                    >
+                      {item.label}
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Spacer for fixed header */}
       <div className="h-[52px]" />

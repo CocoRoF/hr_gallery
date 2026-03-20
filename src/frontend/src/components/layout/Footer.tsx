@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Github } from "lucide-react";
+import { Github, Linkedin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -43,6 +43,15 @@ export function Footer() {
               <path d="M60 10a50 50 0 1 0 0 100 50 50 0 0 0 0-100Zm0 90a40 40 0 1 1 0-80 40 40 0 0 1 0 80Z" />
               <path d="M38 74s6 12 22 12 22-12 22-12" strokeWidth="4" stroke="currentColor" fill="none" strokeLinecap="round" />
             </svg>
+          </a>
+          <a
+            href="https://www.linkedin.com/in/hr-jang-85ba78327/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-text-muted hover:text-text-primary transition-colors"
+            aria-label="LinkedIn"
+          >
+            <Linkedin className="h-4 w-4" />
           </a>
         </div>
       </div>
