@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useDropzone } from "react-dropzone";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import {
   FileText,
   Upload,
@@ -26,6 +28,8 @@ import {
   BarChart3,
   Copy,
   Check,
+  Eye,
+  Code,
 } from "lucide-react";
 import {
   contextifierExtract,
@@ -109,6 +113,7 @@ const ACCEPT_TYPES: Record<string, string[]> = {
 
 type DemoMode = "extract" | "chunk";
 type SourceMode = "file" | "sample";
+type ViewMode = "raw" | "html" | "markdown";
 
 const CHUNK_COLORS = [
   "border-emerald-500/60 bg-emerald-500/8",
@@ -660,6 +665,12 @@ for i, chunk in enumerate(result.chunks):
 
 function ExtractionResultView({ result }: { result: ExtractionResult }) {
   const [showFullText, setShowFullText] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("raw");
+
+  const displayText =
+    showFullText || result.text_length <= 2000
+      ? result.extracted_text
+      : result.extracted_text.slice(0, 2000) + "\n\n... (더 보려면 '전체 보기' 클릭)";
 
   return (
     <div className="space-y-4">
@@ -695,25 +706,24 @@ function ExtractionResultView({ result }: { result: ExtractionResult }) {
 
       {/* Extracted Text */}
       <div className="card">
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between">
           <h4 className="flex items-center gap-1.5 text-xs font-medium text-text-secondary">
             <FileText size={13} />
             추출된 텍스트
           </h4>
-          {result.text_length > 2000 && (
-            <button
-              onClick={() => setShowFullText(!showFullText)}
-              className="text-[11px] text-contextifier hover:text-contextifier-light transition-colors"
-            >
-              {showFullText ? "접기" : "전체 보기"}
-            </button>
-          )}
+          <div className="flex items-center gap-2">
+            <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
+            {result.text_length > 2000 && (
+              <button
+                onClick={() => setShowFullText(!showFullText)}
+                className="text-[11px] text-contextifier hover:text-contextifier-light transition-colors"
+              >
+                {showFullText ? "접기" : "전체 보기"}
+              </button>
+            )}
+          </div>
         </div>
-        <pre className="overflow-x-auto rounded-lg bg-bg-secondary p-4 text-[11px] leading-relaxed text-text-secondary font-mono whitespace-pre-wrap break-words">
-          {showFullText || result.text_length <= 2000
-            ? result.extracted_text
-            : result.extracted_text.slice(0, 2000) + "\n\n... (더 보려면 '전체 보기' 클릭)"}
-        </pre>
+        <RenderedContent text={displayText} viewMode={viewMode} />
       </div>
     </div>
   );
@@ -732,6 +742,7 @@ function ChunkingResultView({
 }) {
   const [activeTab, setActiveTab] = useState<"chunks" | "text">("chunks");
   const [showFullText, setShowFullText] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("raw");
 
   return (
     <div className="space-y-4">
@@ -796,29 +807,32 @@ function ChunkingResultView({
 
       {/* Tabs: Chunks vs Full Text */}
       <div className="card">
-        <div className="mb-4 flex gap-1 rounded-lg bg-bg-secondary p-1">
-          <button
-            onClick={() => setActiveTab("chunks")}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-all ${
-              activeTab === "chunks"
-                ? "bg-contextifier/20 text-contextifier shadow-sm"
-                : "text-text-muted hover:text-text-secondary"
-            }`}
-          >
-            <Scissors size={13} />
-            청크 뷰 ({result.chunk_count})
-          </button>
-          <button
-            onClick={() => setActiveTab("text")}
-            className={`flex flex-1 items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-all ${
-              activeTab === "text"
-                ? "bg-contextifier/20 text-contextifier shadow-sm"
-                : "text-text-muted hover:text-text-secondary"
-            }`}
-          >
-            <FileText size={13} />
-            전체 텍스트
-          </button>
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <div className="flex gap-1 rounded-lg bg-bg-secondary p-1">
+            <button
+              onClick={() => setActiveTab("chunks")}
+              className={`flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-all ${
+                activeTab === "chunks"
+                  ? "bg-contextifier/20 text-contextifier shadow-sm"
+                  : "text-text-muted hover:text-text-secondary"
+              }`}
+            >
+              <Scissors size={13} />
+              청크 뷰 ({result.chunk_count})
+            </button>
+            <button
+              onClick={() => setActiveTab("text")}
+              className={`flex items-center justify-center gap-1.5 rounded-md px-3 py-2 text-xs font-medium transition-all ${
+                activeTab === "text"
+                  ? "bg-contextifier/20 text-contextifier shadow-sm"
+                  : "text-text-muted hover:text-text-secondary"
+              }`}
+            >
+              <FileText size={13} />
+              전체 텍스트
+            </button>
+          </div>
+          <ViewModeToggle viewMode={viewMode} setViewMode={setViewMode} />
         </div>
 
         {activeTab === "chunks" ? (
@@ -853,9 +867,7 @@ function ChunkingResultView({
                   </button>
                   {isExpanded && (
                     <div className="border-t border-border/50 px-3 py-3">
-                      <pre className="overflow-x-auto rounded bg-bg-primary/50 p-3 text-[11px] leading-relaxed text-text-secondary font-mono whitespace-pre-wrap break-words">
-                        {chunk.text}
-                      </pre>
+                      <RenderedContent text={chunk.text} viewMode={viewMode} />
                     </div>
                   )}
                 </div>
@@ -874,15 +886,108 @@ function ChunkingResultView({
                 </button>
               )}
             </div>
-            <pre className="overflow-x-auto rounded-lg bg-bg-secondary p-4 text-[11px] leading-relaxed text-text-secondary font-mono whitespace-pre-wrap break-words">
-              {showFullText || result.text_length <= 3000
-                ? result.extracted_text
-                : result.extracted_text.slice(0, 3000) +
-                  "\n\n... (더 보려면 '전체 보기' 클릭)"}
-            </pre>
+            <RenderedContent
+              text={
+                showFullText || result.text_length <= 3000
+                  ? result.extracted_text
+                  : result.extracted_text.slice(0, 3000) +
+                    "\n\n... (더 보려면 '전체 보기' 클릭)"
+              }
+              viewMode={viewMode}
+            />
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ─── Content Renderer ─── */
+
+function ViewModeToggle({
+  viewMode,
+  setViewMode,
+}: {
+  viewMode: ViewMode;
+  setViewMode: (mode: ViewMode) => void;
+}) {
+  return (
+    <div className="flex items-center gap-0.5 rounded-lg bg-bg-secondary p-0.5">
+      {([
+        { mode: "raw" as ViewMode, icon: Code, label: "Raw" },
+        { mode: "html" as ViewMode, icon: Eye, label: "HTML" },
+        { mode: "markdown" as ViewMode, icon: FileText, label: "MD" },
+      ]).map(({ mode, icon: Icon, label }) => (
+        <button
+          key={mode}
+          onClick={() => setViewMode(mode)}
+          className={`flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-medium transition-all ${
+            viewMode === mode
+              ? "bg-contextifier/20 text-contextifier shadow-sm"
+              : "text-text-muted hover:text-text-secondary"
+          }`}
+        >
+          <Icon size={11} />
+          {label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const HTML_SANITIZE_TAGS = new Set([
+  "table", "thead", "tbody", "tfoot", "tr", "th", "td",
+  "caption", "colgroup", "col",
+  "p", "br", "hr", "h1", "h2", "h3", "h4", "h5", "h6",
+  "ul", "ol", "li", "dl", "dt", "dd",
+  "strong", "b", "em", "i", "u", "s", "code", "pre",
+  "blockquote", "sup", "sub", "span", "div", "a",
+]);
+
+function sanitizeHtml(html: string): string {
+  return html.replace(/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, (match, tag) => {
+    const lower = tag.toLowerCase();
+    if (HTML_SANITIZE_TAGS.has(lower)) {
+      // Strip event handlers (on*) and javascript: hrefs
+      return match
+        .replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, "")
+        .replace(/\s+on\w+\s*=\s*\S+/gi, "")
+        .replace(/href\s*=\s*["']\s*javascript:[^"']*["']/gi, "");
+    }
+    return "";
+  });
+}
+
+function RenderedContent({
+  text,
+  viewMode,
+}: {
+  text: string;
+  viewMode: ViewMode;
+}) {
+  const sanitized = useMemo(() => sanitizeHtml(text), [text]);
+
+  if (viewMode === "raw") {
+    return (
+      <pre className="overflow-x-auto rounded-lg bg-bg-secondary p-4 text-[11px] leading-relaxed text-text-secondary font-mono whitespace-pre-wrap break-words">
+        {text}
+      </pre>
+    );
+  }
+
+  if (viewMode === "html") {
+    return (
+      <div
+        className="rendered-html overflow-x-auto rounded-lg bg-bg-secondary p-4 text-[12px] leading-relaxed text-text-secondary"
+        dangerouslySetInnerHTML={{ __html: sanitized }}
+      />
+    );
+  }
+
+  // markdown
+  return (
+    <div className="rendered-md overflow-x-auto rounded-lg bg-bg-secondary p-4 text-[12px] leading-relaxed text-text-secondary">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
     </div>
   );
 }

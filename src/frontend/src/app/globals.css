@@ -143,4 +143,71 @@
   .gradient-separator {
     @apply h-px bg-gradient-to-r from-transparent via-border to-transparent;
   }
+
+  /* ─── Rendered HTML / Markdown content (Contextifier demo) ─── */
+  .rendered-html table,
+  .rendered-md table {
+    @apply w-full border-collapse text-[11px] my-3;
+  }
+  .rendered-html th,
+  .rendered-md th {
+    @apply bg-contextifier/10 text-contextifier-light font-semibold
+           px-3 py-2 text-left border border-border;
+  }
+  .rendered-html td,
+  .rendered-md td {
+    @apply px-3 py-1.5 border border-border text-text-secondary;
+  }
+  .rendered-html tr:hover,
+  .rendered-md tr:hover {
+    @apply bg-contextifier/5;
+  }
+  .rendered-html h1,
+  .rendered-md h1 {
+    @apply text-base font-bold text-text-primary mt-4 mb-2;
+  }
+  .rendered-html h2,
+  .rendered-md h2 {
+    @apply text-sm font-bold text-text-primary mt-3 mb-1.5;
+  }
+  .rendered-html h3,
+  .rendered-md h3 {
+    @apply text-xs font-bold text-text-primary mt-2 mb-1;
+  }
+  .rendered-html p,
+  .rendered-md p {
+    @apply my-1.5 text-text-secondary;
+  }
+  .rendered-html code,
+  .rendered-md code {
+    @apply bg-bg-primary/50 px-1 py-0.5 rounded text-[10px] font-mono text-contextifier/80;
+  }
+  .rendered-html pre,
+  .rendered-md pre {
+    @apply bg-bg-primary/50 p-3 rounded-lg my-2 overflow-x-auto;
+  }
+  .rendered-html pre code,
+  .rendered-md pre code {
+    @apply bg-transparent px-0 py-0;
+  }
+  .rendered-html ul,
+  .rendered-md ul {
+    @apply list-disc pl-5 my-1.5 space-y-0.5;
+  }
+  .rendered-html ol,
+  .rendered-md ol {
+    @apply list-decimal pl-5 my-1.5 space-y-0.5;
+  }
+  .rendered-html blockquote,
+  .rendered-md blockquote {
+    @apply border-l-2 border-contextifier/40 pl-3 my-2 text-text-muted italic;
+  }
+  .rendered-html hr,
+  .rendered-md hr {
+    @apply border-border my-3;
+  }
+  .rendered-html a,
+  .rendered-md a {
+    @apply text-contextifier underline underline-offset-2;
+  }
 }
