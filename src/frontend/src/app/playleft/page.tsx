@@ -1,24 +1,28 @@
-import Link from "next/link";
-import {
-  Globe2,
+﻿import {
   Github,
   ExternalLink,
-  ArrowLeft,
-  BookOpen,
   Cpu,
   Zap,
   Shield,
   Terminal,
-  Code2,
   Workflow,
   Bot,
-  CheckCircle2,
   Layers,
   Gauge,
-  Lock,
 } from "lucide-react";
+import { LIBRARY_META } from "@/config/libraries";
+import {
+  IntroHero,
+  FeatureGrid,
+  CodeExamples,
+  CTASection,
+  SectionWrapper,
+} from "@/components/library";
+import type { FeatureItem, CodeExample, InstallLine, CTAConfig } from "@/types/library";
 
-const FEATURES = [
+const meta = LIBRARY_META.playleft;
+
+const FEATURES: FeatureItem[] = [
   {
     icon: <Cpu size={20} />,
     title: "Rust 코어",
@@ -78,7 +82,7 @@ const ARCHITECTURE = [
   },
 ];
 
-const CODE_EXAMPLES = [
+const CODE_EXAMPLES: CodeExample[] = [
   {
     title: "기본 네비게이션",
     code: `import playleft
@@ -117,255 +121,136 @@ agent = create_agent(
   },
 ];
 
+const INSTALL_LINES: InstallLine[] = [
+  { comment: "# Build from source (Rust required)", prefix: "$", command: "git clone", args: "https://github.com/CocoRoF/playwLeft" },
+  { prefix: "$", command: "cd", args: "playwLeft" },
+  { prefix: "$", command: "maturin develop", args: "--release" },
+];
+
+const CTA: CTAConfig = {
+  icon: <Gauge size={32} className="text-playleft-light" />,
+  title: "playwLeft에 기여하세요",
+  description: "playwLeft는 현재 Alpha 단계입니다. 피드백과 기여를 환영합니다.",
+  buttons: [
+    {
+      label: "GitHub",
+      href: "https://github.com/CocoRoF/playwLeft",
+      icon: <Github size={16} />,
+      variant: "primary",
+    },
+    {
+      label: "Issues",
+      href: "https://github.com/CocoRoF/playwLeft/issues",
+      icon: <ExternalLink size={16} />,
+      variant: "secondary",
+    },
+  ],
+};
+
 export default function PlaywLeftPage() {
   return (
     <>
       {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-playleft/[0.08] rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-1/3 w-72 h-72 bg-playleft/[0.05] rounded-full blur-[100px]" />
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text-primary transition-colors mb-8"
-          >
-            <ArrowLeft size={14} />
-            Gallery로 돌아가기
-          </Link>
-
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-playleft/20 to-playleft/5 border border-playleft/20 text-playleft">
-                  <Globe2 size={32} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-3xl font-black text-text-primary sm:text-4xl">
-                      playwLeft
-                    </h1>
-                    <span className="badge-playleft">v0.1.0</span>
-                  </div>
-                  <p className="text-sm text-text-muted mt-1">Rust Browser Automation</p>
-                </div>
-              </div>
-
-              <p className="text-lg text-text-secondary leading-relaxed">
-                Rust로 구축된 에이전트 중심의 브라우저 자동화 툴킷.
-                <br />
-                Playwright의 대안으로, CDP 프로토콜 기반의 네이티브 성능을 제공합니다.
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <span className="badge-rust">Rust</span>
-                <span className="badge-python">Python ≥ 3.10</span>
-                <span className="badge bg-green-500/10 text-green-400 border border-green-500/20">Apache-2.0</span>
-                <span className="badge bg-red-500/10 text-red-400 border border-red-500/20">Alpha</span>
-              </div>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href="https://github.com/CocoRoF/playwLeft"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-playleft"
-                >
-                  <Github size={16} />
-                  GitHub
-                </a>
-                <a
-                  href="https://github.com/CocoRoF/playwLeft#readme"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary"
-                >
-                  <BookOpen size={16} />
-                  문서
-                </a>
-              </div>
-            </div>
-
-            {/* Build from source */}
-            <div className="lg:w-96">
-              <div className="code-block">
-                <div className="text-text-muted text-xs mb-2"># Build from source (Rust required)</div>
-                <div className="text-text-primary space-y-1">
-                  <div>
-                    <span className="text-text-muted">$</span>{" "}
-                    <span className="text-accent-light">git clone</span>{" "}
-                    <span className="text-playleft-light text-xs">https://github.com/CocoRoF/playwLeft</span>
-                  </div>
-                  <div>
-                    <span className="text-text-muted">$</span>{" "}
-                    <span className="text-accent-light">cd</span>{" "}
-                    playwLeft
-                  </div>
-                  <div>
-                    <span className="text-text-muted">$</span>{" "}
-                    <span className="text-accent-light">maturin develop</span>{" "}
-                    <span className="text-text-muted">--release</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <IntroHero meta={meta} installLines={INSTALL_LINES} />
 
       {/* ─── Features ─── */}
-      <section className="border-t border-border bg-bg-secondary/30">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <h2 className="section-title text-center">핵심 기능</h2>
-          <p className="section-subtitle text-center mx-auto">
-            Rust의 성능과 안전성으로 브라우저를 자동화하세요.
-          </p>
-
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f) => (
-              <div
-                key={f.title}
-                className="card-glass group hover:bg-bg-card-hover transition-all duration-300"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-playleft/10 text-playleft-light mb-4 transition-transform group-hover:scale-110">
-                  {f.icon}
-                </div>
-                <h3 className="text-base font-bold text-text-primary">{f.title}</h3>
-                <p className="mt-2 text-sm text-text-muted leading-relaxed">{f.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <FeatureGrid
+        title="핵심 기능"
+        subtitle="Rust의 성능과 안전성으로 브라우저를 자동화하세요."
+        features={FEATURES}
+        color="playleft"
+      />
 
       {/* ─── Architecture ─── */}
-      <section className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <h2 className="section-title text-center">아키텍처</h2>
-          <p className="section-subtitle text-center mx-auto">
-            3계층 구조로 성능과 사용성을 동시에 달성합니다.
-          </p>
+      <SectionWrapper>
+        <h2 className="section-title text-center">아키텍처</h2>
+        <p className="section-subtitle text-center mx-auto">
+          3계층 구조로 성능과 사용성을 동시에 달성합니다.
+        </p>
 
-          <div className="mt-14 max-w-lg mx-auto space-y-4">
-            {ARCHITECTURE.map((arch, i) => (
-              <div key={arch.layer}>
-                <div className={`card border ${arch.bgColor} p-5`}>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className={`text-base font-bold ${arch.color}`}>{arch.layer}</h3>
-                      <p className="mt-1 text-sm text-text-muted">{arch.description}</p>
-                    </div>
-                    <Layers size={20} className={arch.color} />
+        <div className="mt-14 max-w-lg mx-auto space-y-4">
+          {ARCHITECTURE.map((arch, i) => (
+            <div key={arch.layer}>
+              <div className={`card border ${arch.bgColor} p-5`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className={`text-base font-bold ${arch.color}`}>
+                      {arch.layer}
+                    </h3>
+                    <p className="mt-1 text-sm text-text-muted">
+                      {arch.description}
+                    </p>
                   </div>
+                  <Layers size={20} className={arch.color} />
                 </div>
-                {i < ARCHITECTURE.length - 1 && (
-                  <div className="flex justify-center py-1">
-                    <div className="w-px h-4 bg-border" />
-                  </div>
-                )}
               </div>
-            ))}
-          </div>
+              {i < ARCHITECTURE.length - 1 && (
+                <div className="flex justify-center py-1">
+                  <div className="w-px h-4 bg-border" />
+                </div>
+              )}
+            </div>
+          ))}
         </div>
-      </section>
+      </SectionWrapper>
 
       {/* ─── Code Examples ─── */}
-      <section className="border-t border-border bg-bg-secondary/30">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <h2 className="section-title text-center">코드 예제</h2>
-          <p className="section-subtitle text-center mx-auto">
-            직관적인 Python API로 브라우저를 제어하세요.
-          </p>
-
-          <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {CODE_EXAMPLES.map((ex) => (
-              <div key={ex.title} className="flex flex-col">
-                <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-playleft-light" />
-                  {ex.title}
-                </h3>
-                <div className="code-block flex-1 text-xs leading-relaxed text-text-secondary">
-                  <pre className="whitespace-pre-wrap">{ex.code}</pre>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <CodeExamples
+        title="코드 예제"
+        subtitle="직관적인 Python API로 브라우저를 제어하세요."
+        examples={CODE_EXAMPLES}
+        color="playleft"
+      />
 
       {/* ─── Comparison ─── */}
-      <section className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <h2 className="section-title text-center">Playwright와의 차이점</h2>
+      <SectionWrapper>
+        <h2 className="section-title text-center">Playwright와의 차이점</h2>
 
-          <div className="mt-14 max-w-2xl mx-auto">
-            <div className="card overflow-hidden">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-3 px-4 text-text-muted font-semibold">특성</th>
-                    <th className="text-center py-3 px-4 text-playleft-light font-semibold">playwLeft</th>
-                    <th className="text-center py-3 px-4 text-text-muted font-semibold">Playwright</th>
+        <div className="mt-14 max-w-2xl mx-auto">
+          <div className="card overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left py-3 px-4 text-text-muted font-semibold">
+                    특성
+                  </th>
+                  <th className="text-center py-3 px-4 text-playleft-light font-semibold">
+                    playwLeft
+                  </th>
+                  <th className="text-center py-3 px-4 text-text-muted font-semibold">
+                    Playwright
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/[0.04]">
+                {[
+                  ["코어 언어", "Rust", "Node.js"],
+                  ["프로토콜", "CDP (직접 구현)", "CDP (래핑)"],
+                  ["에이전트 퍼스트", "✓ 기본 제공", "✗ 별도 구현"],
+                  ["메모리 안전성", "컴파일 타임 보장", "런타임 GC"],
+                  ["Python 바인딩", "PyO3 (네이티브)", "서브프로세스"],
+                  ["상태", "Alpha (v0.1.0)", "Stable"],
+                ].map(([feature, pw, pl]) => (
+                  <tr key={feature}>
+                    <td className="py-3 px-4 text-text-primary font-medium">
+                      {feature}
+                    </td>
+                    <td className="py-3 px-4 text-center text-playleft-light">
+                      {pw}
+                    </td>
+                    <td className="py-3 px-4 text-center text-text-muted">
+                      {pl}
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-white/[0.04]">
-                  {[
-                    ["코어 언어", "Rust", "Node.js"],
-                    ["프로토콜", "CDP (직접 구현)", "CDP (래핑)"],
-                    ["에이전트 퍼스트", "✓ 기본 제공", "✗ 별도 구현"],
-                    ["메모리 안전성", "컴파일 타임 보장", "런타임 GC"],
-                    ["Python 바인딩", "PyO3 (네이티브)", "서브프로세스"],
-                    ["상태", "Alpha (v0.1.0)", "Stable"],
-                  ].map(([feature, pw, pl]) => (
-                    <tr key={feature}>
-                      <td className="py-3 px-4 text-text-primary font-medium">{feature}</td>
-                      <td className="py-3 px-4 text-center text-playleft-light">{pw}</td>
-                      <td className="py-3 px-4 text-center text-text-muted">{pl}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-      </section>
+      </SectionWrapper>
 
       {/* ─── CTA ─── */}
-      <section className="border-t border-border bg-bg-secondary/30">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="card-glass text-center p-10">
-            <Gauge size={32} className="mx-auto text-playleft-light mb-4" />
-            <h2 className="text-xl font-bold text-text-primary sm:text-2xl">
-              playwLeft에 기여하세요
-            </h2>
-            <p className="mt-3 text-text-muted max-w-md mx-auto">
-              playwLeft는 현재 Alpha 단계입니다. 피드백과 기여를 환영합니다.
-            </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <a
-                href="https://github.com/CocoRoF/playwLeft"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-playleft"
-              >
-                <Github size={16} />
-                GitHub
-              </a>
-              <a
-                href="https://github.com/CocoRoF/playwLeft/issues"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary"
-              >
-                <ExternalLink size={16} />
-                Issues
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CTASection cta={CTA} />
     </>
   );
 }

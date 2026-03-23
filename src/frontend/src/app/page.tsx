@@ -353,7 +353,7 @@ function LibraryCard({ lib }: { lib: (typeof LIBRARIES)[number] }) {
           href={lib.demoPath}
           className={`inline-flex items-center gap-1.5 text-sm font-semibold ${linkColorMap[lib.color]} transition-all hover:gap-2.5`}
         >
-          {lib.hasDemo ? "데모 시작하기" : "자세히 보기"} <ArrowRight size={14} />
+          {lib.hasDemo ? "데모 & 소개" : "자세히 보기"} <ArrowRight size={14} />
         </Link>
       </div>
     </div>

@@ -1,22 +1,28 @@
-import Link from "next/link";
 import {
   FileText,
   Github,
-  Package,
-  ExternalLink,
-  ArrowLeft,
   BookOpen,
-  Layers,
   Eye,
   Table2,
   ScanLine,
   Scissors,
+  Layers,
   FileCode2,
   Cpu,
-  CheckCircle2,
 } from "lucide-react";
+import { LIBRARY_META } from "@/config/libraries";
+import {
+  IntroHero,
+  FeatureGrid,
+  CodeExamples,
+  CTASection,
+  SectionWrapper,
+} from "@/components/library";
+import type { FeatureItem, CodeExample, InstallLine, CTAConfig } from "@/types/library";
 
-const FEATURES = [
+const meta = LIBRARY_META.contextifier;
+
+const FEATURES: FeatureItem[] = [
   {
     icon: <FileText size={20} />,
     title: "80+ 포맷 지원",
@@ -63,7 +69,7 @@ const SUPPORTED_FORMATS = [
   { category: "코드", formats: "PY, JS, TS, JAVA, C, CPP, RS, GO 등 30+" },
 ];
 
-const CODE_EXAMPLES = [
+const CODE_EXAMPLES: CodeExample[] = [
   {
     title: "기본 텍스트 추출",
     code: `from contextifier import DocumentProcessor
@@ -98,227 +104,105 @@ for chunk in result.chunks:
   },
 ];
 
+const INSTALL_LINES: InstallLine[] = [
+  { comment: "# Installation", prefix: "$", command: "pip install", args: "contextifier" },
+  { comment: "# or with uv", prefix: "$", command: "uv add", args: "contextifier" },
+];
+
+const CTA: CTAConfig = {
+  icon: <Cpu size={32} className="text-contextifier-light" />,
+  title: "Contextifier로 시작하세요",
+  description: "pip install contextifier로 설치하고, 문서를 AI 컨텍스트로 변환하세요.",
+  buttons: [
+    {
+      label: "GitHub",
+      href: "https://github.com/CocoRoF/Contextifier",
+      icon: <Github size={16} />,
+      variant: "primary",
+    },
+    {
+      label: "문서 보기",
+      href: "https://github.com/CocoRoF/Contextifier#readme",
+      icon: <BookOpen size={16} />,
+      variant: "secondary",
+    },
+  ],
+};
+
 export default function ContextifierPage() {
   return (
     <>
       {/* ─── Hero ─── */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 right-1/4 w-96 h-96 bg-contextifier/[0.08] rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-contextifier/[0.05] rounded-full blur-[100px]" />
-        </div>
-
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text-primary transition-colors mb-8"
-          >
-            <ArrowLeft size={14} />
-            Gallery로 돌아가기
-          </Link>
-
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
-            <div className="max-w-2xl">
-              <div className="flex items-center gap-4 mb-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-contextifier/20 to-contextifier/5 border border-contextifier/20 text-contextifier">
-                  <FileText size={32} />
-                </div>
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h1 className="text-3xl font-black text-text-primary sm:text-4xl">
-                      Contextifier
-                    </h1>
-                    <span className="badge-contextifier">v0.2.2</span>
-                  </div>
-                  <p className="text-sm text-text-muted mt-1">Document → AI Context</p>
-                </div>
-              </div>
-
-              <p className="text-lg text-text-secondary leading-relaxed">
-                다양한 문서 포맷을 AI가 이해할 수 있는 구조화된 텍스트로 변환합니다.
-                <br />
-                5단계 균일 파이프라인으로 모든 문서 포맷에 일관된 결과를 제공합니다.
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <span className="badge-python">Python ≥ 3.12</span>
-                <span className="badge bg-green-500/10 text-green-400 border border-green-500/20">Apache-2.0</span>
-              </div>
-
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a
-                  href="https://github.com/CocoRoF/Contextifier"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-contextifier"
-                >
-                  <Github size={16} />
-                  GitHub
-                </a>
-                <a
-                  href="https://pypi.org/project/contextifier/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-secondary"
-                >
-                  <Package size={16} />
-                  PyPI
-                </a>
-              </div>
-            </div>
-
-            {/* Quick Install */}
-            <div className="lg:w-96">
-              <div className="code-block">
-                <div className="text-text-muted text-xs mb-2"># Installation</div>
-                <div className="text-text-primary">
-                  <span className="text-text-muted">$</span>{" "}
-                  <span className="text-accent-light">pip install</span>{" "}
-                  <span className="text-contextifier-light">contextifier</span>
-                </div>
-                <div className="mt-3 text-text-muted text-xs mb-2"># or with uv</div>
-                <div className="text-text-primary">
-                  <span className="text-text-muted">$</span>{" "}
-                  <span className="text-accent-light">uv add</span>{" "}
-                  <span className="text-contextifier-light">contextifier</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <IntroHero meta={meta} installLines={INSTALL_LINES} />
 
       {/* ─── Features ─── */}
-      <section className="border-t border-border bg-bg-secondary/30">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <h2 className="section-title text-center">핵심 기능</h2>
-          <p className="section-subtitle text-center mx-auto">
-            Contextifier가 제공하는 강력한 문서 처리 기능을 확인하세요.
-          </p>
-
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((f) => (
-              <div
-                key={f.title}
-                className="card-glass group hover:bg-bg-card-hover transition-all duration-300"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-contextifier/10 text-contextifier-light mb-4 transition-transform group-hover:scale-110">
-                  {f.icon}
-                </div>
-                <h3 className="text-base font-bold text-text-primary">{f.title}</h3>
-                <p className="mt-2 text-sm text-text-muted leading-relaxed">{f.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <FeatureGrid
+        title="핵심 기능"
+        subtitle="Contextifier가 제공하는 강력한 문서 처리 기능을 확인하세요."
+        features={FEATURES}
+        color="contextifier"
+      />
 
       {/* ─── Supported Formats ─── */}
-      <section className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <h2 className="section-title text-center">지원 포맷</h2>
-          <p className="section-subtitle text-center mx-auto">
-            80가지 이상의 파일 확장자를 처리할 수 있습니다.
-          </p>
+      <SectionWrapper>
+        <h2 className="section-title text-center">지원 포맷</h2>
+        <p className="section-subtitle text-center mx-auto">
+          80가지 이상의 파일 확장자를 처리할 수 있습니다.
+        </p>
 
-          <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {SUPPORTED_FORMATS.map((group) => (
-              <div key={group.category} className="card">
-                <div className="flex items-center gap-2 mb-3">
-                  <FileCode2 size={16} className="text-contextifier-light" />
-                  <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">{group.category}</h3>
-                </div>
-                <p className="text-sm text-text-muted font-mono">{group.formats}</p>
+        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {SUPPORTED_FORMATS.map((group) => (
+            <div key={group.category} className="card">
+              <div className="flex items-center gap-2 mb-3">
+                <FileCode2 size={16} className="text-contextifier-light" />
+                <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">
+                  {group.category}
+                </h3>
               </div>
-            ))}
-          </div>
+              <p className="text-sm text-text-muted font-mono">{group.formats}</p>
+            </div>
+          ))}
         </div>
-      </section>
+      </SectionWrapper>
 
       {/* ─── Code Examples ─── */}
-      <section className="border-t border-border bg-bg-secondary/30">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <h2 className="section-title text-center">코드 예제</h2>
-          <p className="section-subtitle text-center mx-auto">
-            간단한 API로 복잡한 문서 처리를 수행하세요.
-          </p>
-
-          <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {CODE_EXAMPLES.map((ex) => (
-              <div key={ex.title} className="flex flex-col">
-                <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
-                  <CheckCircle2 size={14} className="text-contextifier-light" />
-                  {ex.title}
-                </h3>
-                <div className="code-block flex-1 text-xs leading-relaxed text-text-secondary">
-                  <pre className="whitespace-pre-wrap">{ex.code}</pre>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <CodeExamples
+        title="코드 예제"
+        subtitle="간단한 API로 복잡한 문서 처리를 수행하세요."
+        examples={CODE_EXAMPLES}
+        color="contextifier"
+      />
 
       {/* ─── Pipeline ─── */}
-      <section className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-          <h2 className="section-title text-center">5단계 균일 파이프라인</h2>
-          <p className="section-subtitle text-center mx-auto">
-            모든 문서 포맷에 동일한 처리 파이프라인을 적용합니다.
-          </p>
+      <SectionWrapper>
+        <h2 className="section-title text-center">5단계 균일 파이프라인</h2>
+        <p className="section-subtitle text-center mx-auto">
+          모든 문서 포맷에 동일한 처리 파이프라인을 적용합니다.
+        </p>
 
-          <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-3 flex-wrap">
-            {["입력 감지", "텍스트 추출", "테이블 처리", "OCR 처리", "청킹"].map((step, i) => (
+        <div className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-3 flex-wrap">
+          {["입력 감지", "텍스트 추출", "테이블 처리", "OCR 처리", "청킹"].map(
+            (step, i) => (
               <div key={step} className="flex items-center gap-3">
                 <div className="card-glass flex items-center gap-3 px-5 py-3">
                   <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-contextifier/15 text-contextifier-light text-sm font-bold">
                     {i + 1}
                   </div>
-                  <span className="text-sm font-medium text-text-primary">{step}</span>
+                  <span className="text-sm font-medium text-text-primary">
+                    {step}
+                  </span>
                 </div>
                 {i < 4 && (
                   <span className="text-text-muted hidden sm:block">→</span>
                 )}
               </div>
-            ))}
-          </div>
+            )
+          )}
         </div>
-      </section>
+      </SectionWrapper>
 
       {/* ─── CTA ─── */}
-      <section className="border-t border-border bg-bg-secondary/30">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="card-glass text-center p-10">
-            <Cpu size={32} className="mx-auto text-contextifier-light mb-4" />
-            <h2 className="text-xl font-bold text-text-primary sm:text-2xl">
-              Contextifier로 시작하세요
-            </h2>
-            <p className="mt-3 text-text-muted max-w-md mx-auto">
-              pip install contextifier로 설치하고, 문서를 AI 컨텍스트로 변환하세요.
-            </p>
-            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-              <a
-                href="https://github.com/CocoRoF/Contextifier"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-contextifier"
-              >
-                <Github size={16} />
-                GitHub
-              </a>
-              <a
-                href="https://github.com/CocoRoF/Contextifier#readme"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-secondary"
-              >
-                <BookOpen size={16} />
-                문서 보기
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
+      <CTASection cta={CTA} />
     </>
   );
 }
