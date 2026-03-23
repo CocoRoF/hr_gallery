@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     f2a_default_lang: str = "en"
     f2a_upload_dir: str = "/app/uploads"
 
+    # Contextifier
+    contextifier_max_file_size_mb: int = 50
+    contextifier_upload_dir: str = "/app/uploads/contextifier"
+
     @field_validator("allowed_origins", mode="before")
     @classmethod
     def parse_origins(cls, v: object) -> object:

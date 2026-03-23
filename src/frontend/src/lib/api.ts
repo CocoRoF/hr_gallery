@@ -268,3 +268,141 @@ export async function getSampleDatasets() {
 export function getReportUrl(analysisId: string) {
   return `${API_BASE}/f2a/report/${analysisId}`;
 }
+
+// ─── Contextifier ───
+
+export interface ContextifierInfoResponse {
+  extensions: string[];
+  total_count: number;
+  categories: Record<string, string[]>;
+  max_file_size_mb: number;
+}
+
+export interface ExtractionResult {
+  success: boolean;
+  filename: string;
+  file_extension: string;
+  file_size_bytes: number;
+  extracted_text: string;
+  text_length: number;
+  metadata_block: string | null;
+  table_count: number;
+  image_count: number;
+  page_count: number;
+  error: string | null;
+}
+
+export interface ChunkInfoItem {
+  index: number;
+  text: string;
+  length: number;
+}
+
+export interface ChunkingResult {
+  success: boolean;
+  filename: string;
+  file_extension: string;
+  file_size_bytes: number;
+  extracted_text: string;
+  text_length: number;
+  chunks: ChunkInfoItem[];
+  chunk_count: number;
+  chunk_size: number;
+  chunk_overlap: number;
+  avg_chunk_length: number;
+  min_chunk_length: number;
+  max_chunk_length: number;
+  table_format: string;
+  metadata_language: string;
+  error: string | null;
+}
+
+export interface ContextifierSampleFile {
+  id: string;
+  name: string;
+  description: string;
+  extension: string;
+  size_kb: number;
+}
+
+export async function getContextifierInfo() {
+  return apiFetch<ContextifierInfoResponse>("/contextifier/info");
+}
+
+export async function contextifierExtract(
+  file: File,
+  tableFormat: string = "html",
+  metadataLanguage: string = "ko",
+) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("table_format", tableFormat);
+  formData.append("metadata_language", metadataLanguage);
+
+  const res = await fetch(`${API_BASE}/contextifier/extract`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || `Extraction failed: ${res.status}`);
+  }
+
+  return (await res.json()) as ExtractionResult;
+}
+
+export async function contextifierExtractAndChunk(
+  file: File,
+  chunkSize: number = 1000,
+  chunkOverlap: number = 200,
+  tableFormat: string = "html",
+  metadataLanguage: string = "ko",
+) {
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("chunk_size", String(chunkSize));
+  formData.append("chunk_overlap", String(chunkOverlap));
+  formData.append("table_format", tableFormat);
+  formData.append("metadata_language", metadataLanguage);
+
+  const res = await fetch(`${API_BASE}/contextifier/extract-and-chunk`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || `Extraction/chunking failed: ${res.status}`);
+  }
+
+  return (await res.json()) as ChunkingResult;
+}
+
+export async function getContextifierSamples() {
+  return apiFetch<{ samples: ContextifierSampleFile[] }>("/contextifier/sample-files");
+}
+
+export async function contextifierExtractSample(
+  sampleId: string,
+  tableFormat: string = "html",
+  metadataLanguage: string = "ko",
+) {
+  return apiFetch<ExtractionResult>(
+    `/contextifier/extract-sample/${encodeURIComponent(sampleId)}?table_format=${tableFormat}&metadata_language=${metadataLanguage}`,
+    { method: "POST" },
+  );
+}
+
+export async function contextifierChunkSample(
+  sampleId: string,
+  chunkSize: number = 1000,
+  chunkOverlap: number = 200,
+  tableFormat: string = "html",
+  metadataLanguage: string = "ko",
+) {
+  return apiFetch<ChunkingResult>(
+    `/contextifier/chunk-sample/${encodeURIComponent(sampleId)}?chunk_size=${chunkSize}&chunk_overlap=${chunkOverlap}&table_format=${tableFormat}&metadata_language=${metadataLanguage}`,
+    { method: "POST" },
+  );
+}

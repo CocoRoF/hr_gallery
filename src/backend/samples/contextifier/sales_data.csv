@@ -1,0 +1,16 @@
+Product,Category,Price,Quantity,Revenue,Region,Quarter
+MacBook Pro 16,Laptop,2499.00,150,374850.00,North America,Q1
+Galaxy S24 Ultra,Smartphone,1299.99,320,415996.80,Asia Pacific,Q1
+iPad Air M2,Tablet,599.00,280,167720.00,Europe,Q1
+ThinkPad X1 Carbon,Laptop,1849.00,95,175555.00,North America,Q2
+iPhone 15 Pro Max,Smartphone,1199.00,450,539550.00,Asia Pacific,Q2
+Surface Pro 10,Tablet,999.00,120,119880.00,Europe,Q2
+Dell XPS 15,Laptop,1799.00,110,197890.00,North America,Q3
+Pixel 8 Pro,Smartphone,999.00,200,199800.00,Asia Pacific,Q3
+Galaxy Tab S9,Tablet,849.00,160,135840.00,Europe,Q3
+MacBook Air M3,Laptop,1099.00,300,329700.00,North America,Q4
+OnePlus 12,Smartphone,799.00,180,143820.00,Asia Pacific,Q4
+iPad Pro M4,Tablet,1099.00,220,241780.00,Europe,Q4
+HP Spectre x360,Laptop,1599.00,85,135915.00,North America,Q1
+Samsung Galaxy Z Fold,Smartphone,1799.00,95,170905.00,Asia Pacific,Q1
+Lenovo Tab P12 Pro,Tablet,649.00,140,90860.00,Europe,Q1

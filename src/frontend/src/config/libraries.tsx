@@ -44,7 +44,7 @@ export const LIBRARY_META: Record<string, LibraryMeta> = {
   contextifier: {
     id: "contextifier",
     name: "Contextifier",
-    version: "0.2.2",
+    version: "0.2.4",
     tagline: "Document → AI Context",
     description:
       "다양한 문서 포맷을 AI가 이해할 수 있는 구조화된 텍스트로 변환합니다. 5단계 균일 파이프라인으로 모든 문서 포맷에 일관된 결과를 제공합니다.",
@@ -54,7 +54,7 @@ export const LIBRARY_META: Record<string, LibraryMeta> = {
     license: "Apache-2.0",
     github: "https://github.com/CocoRoF/Contextifier",
     pypi: "https://pypi.org/project/contextifier/",
-    hasDemo: false,
+    hasDemo: true,
   },
   playleft: {
     id: "playleft",

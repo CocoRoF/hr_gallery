@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import googer, f2a
+from app.routers import googer, f2a, contextifier
 
 # ─── Logging ───
 # Enable googer library logs so search diagnostics are visible in Docker logs
@@ -36,6 +36,7 @@ app.add_middleware(
 # ─── Routers ───
 app.include_router(googer.router, prefix="/api/googer", tags=["googer"])
 app.include_router(f2a.router, prefix="/api/f2a", tags=["f2a"])
+app.include_router(contextifier.router, prefix="/api/contextifier", tags=["contextifier"])
 
 
 @app.get("/api/health")
@@ -95,7 +96,7 @@ async def libraries():
             },
             {
                 "name": "contextifier",
-                "version": _get_version("contextifier") or "0.2.2",
+                "version": _get_version("contextifier") or "0.2.4",
                 "description": "Convert raw documents into AI-understandable context with intelligent text extraction, table detection, and semantic chunking.",
                 "tagline": "Document → AI Context",
                 "language": "Python",
@@ -111,7 +112,7 @@ async def libraries():
                     "80+_formats",
                     "langchain_integration",
                 ],
-                "has_demo": False,
+                "has_demo": True,
                 "demo_path": "/contextifier",
             },
             {

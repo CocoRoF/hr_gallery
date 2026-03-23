@@ -8,6 +8,7 @@ pydantic-settings==2.9.*
 # ─── Libraries ───
 googer==0.7.3
 f2a==1.1.0
+contextifier==0.2.4
 
 # ─── f2a optional deps ───
 pandas>=2.0
