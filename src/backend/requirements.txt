@@ -9,7 +9,7 @@ pydantic-settings>=2.12.0
 googer==0.7.3
 f2a==1.1.0
 contextifier==0.2.4
-an-web==0.2.1
+an-web==0.3.0
 
 # ─── f2a optional deps ───
 pandas>=2.0
