@@ -1,4 +1,4 @@
-"""Pydantic schemas for an-web API — v0.1.1."""
+"""Pydantic schemas for an-web API — v0.2.1."""
 
 from pydantic import BaseModel, Field
 

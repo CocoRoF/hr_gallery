@@ -79,7 +79,7 @@ async def libraries():
                 "description": "File to Analysis — Automatically perform statistical analysis and visualization from any data source.",
                 "tagline": "File to Analysis",
                 "language": "Python",
-                "license": "MIT",
+                "license": "Apache-2.0",
                 "github": "https://github.com/CocoRoF/f2a",
                 "pypi": "https://pypi.org/project/f2a/",
                 "color": "purple",
@@ -137,7 +137,7 @@ async def libraries():
             },
             {
                 "name": "an-web",
-                "version": _get_version("an-web") or "0.1.1",
+                "version": _get_version("an-web") or "0.2.1",
                 "description": "AI-Native Web Browser Engine — semantic-first headless browser for AI agents.",
                 "tagline": "AI-Native Web Browser Engine",
                 "language": "Python",

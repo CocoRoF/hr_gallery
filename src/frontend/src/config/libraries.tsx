@@ -79,7 +79,7 @@ export const LIBRARY_META: Record<string, LibraryMeta> = {
   anweb: {
     id: "an-web",
     name: "an-web",
-    version: "0.1.1",
+    version: "0.2.1",
     tagline: "AI-Native Web Browser Engine",
     description:
       "AI 에이전트를 위한 시맨틱 우선 헤드리스 브라우저 엔진. 픽셀 렌더링 없이 웹 페이지를 구조화된 데이터로 변환합니다.",
