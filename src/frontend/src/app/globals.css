@@ -83,6 +83,10 @@
     @apply btn-primary bg-playleft hover:shadow-playleft/25;
   }
 
+  .btn-anweb {
+    @apply btn-primary bg-anweb hover:shadow-anweb/25;
+  }
+
   /* ─── Inputs ─── */
   .input-field {
     @apply w-full px-4 py-2.5 bg-bg-secondary border border-border rounded-lg
@@ -114,6 +118,10 @@
 
   .badge-playleft {
     @apply badge bg-playleft/10 text-playleft-light border border-playleft/20;
+  }
+
+  .badge-anweb {
+    @apply badge bg-anweb/10 text-anweb-light border border-anweb/20;
   }
 
   .badge-rust {

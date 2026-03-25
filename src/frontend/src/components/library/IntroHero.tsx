@@ -14,12 +14,14 @@ export function IntroHero({ meta, installLines }: IntroHeroProps) {
     f2a: "bg-f2a/[0.08]",
     contextifier: "bg-contextifier/[0.08]",
     playleft: "bg-playleft/[0.08]",
+    anweb: "bg-anweb/[0.08]",
   };
   const colorMapAlt: Record<string, string> = {
     googer: "bg-googer/[0.05]",
     f2a: "bg-f2a/[0.05]",
     contextifier: "bg-contextifier/[0.05]",
     playleft: "bg-playleft/[0.05]",
+    anweb: "bg-anweb/[0.05]",
   };
   const iconBg: Record<string, string> = {
     googer: "from-googer/20 to-googer/5 border-googer/20 text-googer",
@@ -28,24 +30,29 @@ export function IntroHero({ meta, installLines }: IntroHeroProps) {
       "from-contextifier/20 to-contextifier/5 border-contextifier/20 text-contextifier",
     playleft:
       "from-playleft/20 to-playleft/5 border-playleft/20 text-playleft",
+    anweb:
+      "from-anweb/20 to-anweb/5 border-anweb/20 text-anweb",
   };
   const badgeClass: Record<string, string> = {
     googer: "badge-googer",
     f2a: "badge-f2a",
     contextifier: "badge-contextifier",
     playleft: "badge-playleft",
+    anweb: "badge-anweb",
   };
   const btnClass: Record<string, string> = {
     googer: "btn-googer",
     f2a: "btn-f2a",
     contextifier: "btn-contextifier",
     playleft: "btn-playleft",
+    anweb: "btn-anweb",
   };
   const installHighlight: Record<string, string> = {
     googer: "text-googer-light",
     f2a: "text-f2a-light",
     contextifier: "text-contextifier-light",
     playleft: "text-playleft-light",
+    anweb: "text-anweb-light",
   };
 
   const statusBadgeMap: Record<string, string> = {

@@ -13,8 +13,8 @@ export interface LibraryMeta {
   tagline: string;
   /** Longer description (1-2 sentences) */
   description: string;
-  /** Tailwind color key: googer | f2a | contextifier | playleft */
-  color: "googer" | "f2a" | "contextifier" | "playleft";
+  /** Tailwind color key: googer | f2a | contextifier | playleft | anweb */
+  color: "googer" | "f2a" | "contextifier" | "playleft" | "anweb";
   /** Lucide icon element */
   icon: ReactNode;
   /** Programming languages */

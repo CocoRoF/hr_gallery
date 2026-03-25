@@ -5,7 +5,7 @@ interface FeatureGridProps {
   subtitle: string;
   features: FeatureItem[];
   /** Library color key for icon backgrounds */
-  color: "googer" | "f2a" | "contextifier" | "playleft";
+  color: "googer" | "f2a" | "contextifier" | "playleft" | "anweb";
 }
 
 const iconBg: Record<string, string> = {
@@ -13,6 +13,7 @@ const iconBg: Record<string, string> = {
   f2a: "bg-f2a/10 text-f2a-light",
   contextifier: "bg-contextifier/10 text-contextifier-light",
   playleft: "bg-playleft/10 text-playleft-light",
+  anweb: "bg-anweb/10 text-anweb-light",
 };
 
 export function FeatureGrid({

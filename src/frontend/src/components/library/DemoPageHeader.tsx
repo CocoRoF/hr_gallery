@@ -16,18 +16,21 @@ const iconBg: Record<string, string> = {
   f2a: "bg-f2a/15 text-f2a",
   contextifier: "bg-contextifier/15 text-contextifier",
   playleft: "bg-playleft/15 text-playleft",
+  anweb: "bg-anweb/15 text-anweb",
 };
 const badgeClass: Record<string, string> = {
   googer: "badge-googer",
   f2a: "badge-f2a",
   contextifier: "badge-contextifier",
   playleft: "badge-playleft",
+  anweb: "badge-anweb",
 };
 const linkHover: Record<string, string> = {
   googer: "hover:border-googer/50 hover:text-googer-light",
   f2a: "hover:border-f2a/50 hover:text-f2a-light",
   contextifier: "hover:border-contextifier/50 hover:text-contextifier-light",
   playleft: "hover:border-playleft/50 hover:text-playleft-light",
+  anweb: "hover:border-anweb/50 hover:text-anweb-light",
 };
 
 export function DemoPageHeader({

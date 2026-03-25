@@ -3,6 +3,7 @@ import {
   BarChart3,
   FileText,
   Globe2,
+  Globe,
 } from "lucide-react";
 import type { LibraryMeta } from "@/types/library";
 
@@ -75,7 +76,22 @@ export const LIBRARY_META: Record<string, LibraryMeta> = {
     hasDemo: false,
     status: "Alpha",
   },
+  anweb: {
+    id: "an-web",
+    name: "an-web",
+    version: "0.1.1",
+    tagline: "AI-Native Web Browser Engine",
+    description:
+      "AI 에이전트를 위한 시맨틱 우선 헤드리스 브라우저 엔진. 픽셀 렌더링 없이 웹 페이지를 구조화된 데이터로 변환합니다.",
+    color: "anweb",
+    icon: <Globe size={32} />,
+    languages: [{ label: "Python ≥ 3.12", className: "badge-python" }],
+    license: "Apache-2.0",
+    github: "https://github.com/CocoRoF/an-web",
+    pypi: "https://pypi.org/project/an-web/",
+    hasDemo: true,
+  },
 };
 
 /** Ordered list of library IDs for navigation and gallery display */
-export const LIBRARY_ORDER = ["googer", "f2a", "contextifier", "playleft"] as const;
+export const LIBRARY_ORDER = ["googer", "f2a", "contextifier", "playleft", "anweb"] as const;

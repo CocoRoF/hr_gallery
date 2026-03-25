@@ -6,7 +6,7 @@ interface CodeExamplesProps {
   subtitle: string;
   examples: CodeExample[];
   /** Library color key for accent */
-  color: "googer" | "f2a" | "contextifier" | "playleft";
+  color: "googer" | "f2a" | "contextifier" | "playleft" | "anweb";
 }
 
 const iconColor: Record<string, string> = {
@@ -14,6 +14,7 @@ const iconColor: Record<string, string> = {
   f2a: "text-f2a-light",
   contextifier: "text-contextifier-light",
   playleft: "text-playleft-light",
+  anweb: "text-anweb-light",
 };
 
 export function CodeExamples({

@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import googer, f2a, contextifier
+from app.routers import googer, f2a, contextifier, anweb
 
 # ─── Logging ───
 # Enable googer library logs so search diagnostics are visible in Docker logs
@@ -18,7 +18,7 @@ logging.getLogger("googer").setLevel(logging.INFO)
 
 app = FastAPI(
     title="HR Gallery API",
-    description="CocoRoF 라이브러리 갤러리 — googer, f2a, Contextifier, playwLeft",
+    description="CocoRoF 라이브러리 갤러리 — googer, f2a, Contextifier, playwLeft, an-web",
     version="2.0.0",
     docs_url="/api/docs",
     openapi_url="/api/openapi.json",
@@ -37,6 +37,7 @@ app.add_middleware(
 app.include_router(googer.router, prefix="/api/googer", tags=["googer"])
 app.include_router(f2a.router, prefix="/api/f2a", tags=["f2a"])
 app.include_router(contextifier.router, prefix="/api/contextifier", tags=["contextifier"])
+app.include_router(anweb.router, prefix="/api/anweb", tags=["anweb"])
 
 
 @app.get("/api/health")
@@ -133,6 +134,26 @@ async def libraries():
                 ],
                 "has_demo": False,
                 "demo_path": "/playleft",
+            },
+            {
+                "name": "an-web",
+                "version": _get_version("an-web") or "0.1.1",
+                "description": "AI-Native Web Browser Engine — semantic-first headless browser for AI agents.",
+                "tagline": "AI-Native Web Browser Engine",
+                "language": "Python",
+                "license": "Apache-2.0",
+                "github": "https://github.com/CocoRoF/an-web",
+                "pypi": "https://pypi.org/project/an-web/",
+                "color": "blue",
+                "features": [
+                    "semantic_extraction",
+                    "11_ai_tools",
+                    "policy_engine",
+                    "cookie_storage",
+                    "replay_engine",
+                ],
+                "has_demo": True,
+                "demo_path": "/an-web",
             },
         ]
     }

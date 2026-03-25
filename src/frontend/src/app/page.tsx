@@ -4,6 +4,7 @@ import {
   BarChart3,
   FileText,
   Globe2,
+  Globe,
   ArrowRight,
   ExternalLink,
   Github,
@@ -103,10 +104,33 @@ async with playleft.Browser() as browser:
     page = await browser.new_page()
     await page.goto("https://example.com")`,
   },
+  {
+    name: "an-web",
+    version: "0.1.1",
+    tagline: "AI-Native Web Browser Engine",
+    description:
+      "AI 에이전트를 위한 시맨틱 우선 헤드리스 브라우저 엔진. 픽셀 렌더링 없이 웹 페이지를 구조화된 데이터로 변환합니다.",
+    icon: <Globe size={24} />,
+    color: "anweb",
+    badge: "badge-anweb",
+    language: "Python",
+    github: "https://github.com/CocoRoF/an-web",
+    pypi: "https://pypi.org/project/an-web/",
+    demoPath: "/an-web",
+    hasDemo: true,
+    features: ["시맨틱 추출", "11개 AI 도구", "정책 엔진", "쿠키/스토리지", "리플레이 엔진"],
+    code: `from an_web import ANWebEngine
+
+async with ANWebEngine() as engine:
+    session = await engine.create_session()
+    await session.navigate("https://example.com")
+    snap = await session.snapshot()
+    print(snap.title, snap.page_type)`,
+  },
 ];
 
 const STATS = [
-  { label: "라이브러리", value: "4", icon: <Package size={18} /> },
+  { label: "라이브러리", value: "5", icon: <Package size={18} /> },
   { label: "분석 모듈", value: "23+", icon: <Layers size={18} /> },
   { label: "지원 포맷", value: "80+", icon: <FileText size={18} /> },
   { label: "오픈소스", value: "100%", icon: <Github size={18} /> },
@@ -246,7 +270,8 @@ export default function HomePage() {
             <span className="text-accent-light">pip install</span>{" "}
             <span className="text-googer-light">googer</span>{" "}
             <span className="text-f2a-light">f2a</span>{" "}
-            <span className="text-contextifier-light">contextifier</span>
+            <span className="text-contextifier-light">contextifier</span>{" "}
+            <span className="text-anweb-light">an-web</span>
           </div>
 
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -283,6 +308,7 @@ function LibraryCard({ lib }: { lib: (typeof LIBRARIES)[number] }) {
     f2a: "bg-f2a/10 text-f2a",
     contextifier: "bg-contextifier/10 text-contextifier",
     playleft: "bg-playleft/10 text-playleft",
+    anweb: "bg-anweb/10 text-anweb",
   };
 
   const linkColorMap: Record<string, string> = {
@@ -290,6 +316,7 @@ function LibraryCard({ lib }: { lib: (typeof LIBRARIES)[number] }) {
     f2a: "text-f2a-light",
     contextifier: "text-contextifier-light",
     playleft: "text-playleft-light",
+    anweb: "text-anweb-light",
   };
 
   return (

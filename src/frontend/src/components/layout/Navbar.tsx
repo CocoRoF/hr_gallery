@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/f2a", label: "f2a" },
   { href: "/contextifier", label: "Contextifier" },
   { href: "/playleft", label: "playwLeft" },
+  { href: "/an-web", label: "an-web" },
 ];
 
 export function Navbar() {

@@ -406,3 +406,91 @@ export async function contextifierChunkSample(
     { method: "POST" },
   );
 }
+
+// ─── an-web ───
+
+export interface AnwebNavigateParams {
+  url: string;
+}
+
+export interface AnwebExtractParams {
+  url: string;
+  mode: "text" | "css" | "table" | "auto";
+  selector?: string;
+}
+
+export interface AnwebSnapshotParams {
+  url: string;
+}
+
+export interface AnwebPolicyCheckParams {
+  url: string;
+  policy: "default" | "strict" | "sandboxed";
+  allowed_domains?: string[];
+}
+
+export interface AnwebNavigateResponse {
+  success: boolean;
+  url: string;
+  title: string;
+  page_type: string;
+  status: string;
+  error: string | null;
+}
+
+export interface AnwebExtractResponse {
+  success: boolean;
+  url: string;
+  mode: string;
+  data: any;
+  count: number;
+  error: string | null;
+}
+
+export interface AnwebSnapshotResponse {
+  success: boolean;
+  url: string;
+  title: string;
+  page_type: string;
+  primary_actions: string[];
+  inputs: string[];
+  semantic_tree: string;
+  error: string | null;
+}
+
+export interface AnwebPolicyCheckResponse {
+  success: boolean;
+  url: string;
+  policy: string;
+  allowed: boolean;
+  reason: string;
+  error: string | null;
+}
+
+export async function anwebNavigate(params: AnwebNavigateParams) {
+  return apiFetch<AnwebNavigateResponse>("/anweb/navigate", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+}
+
+export async function anwebExtract(params: AnwebExtractParams) {
+  return apiFetch<AnwebExtractResponse>("/anweb/extract", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+}
+
+export async function anwebSnapshot(params: AnwebSnapshotParams) {
+  return apiFetch<AnwebSnapshotResponse>("/anweb/snapshot", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+}
+
+export async function anwebPolicyCheck(params: AnwebPolicyCheckParams) {
+  return apiFetch<AnwebPolicyCheckResponse>("/anweb/policy-check", {
+    method: "POST",
+    body: JSON.stringify(params),
+  });
+}

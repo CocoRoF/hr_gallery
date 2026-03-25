@@ -11,6 +11,7 @@ const accentColor: Record<string, string> = {
   f2a: "text-f2a-light",
   contextifier: "text-contextifier-light",
   playleft: "text-playleft-light",
+  anweb: "text-anweb-light",
 };
 
 const btnClass: Record<string, string> = {
@@ -18,6 +19,7 @@ const btnClass: Record<string, string> = {
   f2a: "btn-f2a",
   contextifier: "btn-contextifier",
   playleft: "btn-playleft",
+  anweb: "btn-anweb",
 };
 
 export function DemoComingSoon({ meta }: DemoComingSoonProps) {

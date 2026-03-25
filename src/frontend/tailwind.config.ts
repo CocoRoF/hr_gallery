@@ -43,6 +43,11 @@ const config: Config = {
           dark: "#d97706",
           light: "#fbbf24",
         },
+        anweb: {
+          DEFAULT: "#3b82f6",
+          dark: "#2563eb",
+          light: "#60a5fa",
+        },
       },
       fontFamily: {
         sans: ['"Inter"', "ui-sans-serif", "system-ui", "sans-serif"],
