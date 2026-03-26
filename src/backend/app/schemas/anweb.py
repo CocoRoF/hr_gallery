@@ -1,4 +1,6 @@
-"""Pydantic schemas for an-web API — v0.2.1."""
+"""Pydantic schemas for an-web API — v0.4.1."""
+
+from typing import Any
 
 from pydantic import BaseModel, Field
 
@@ -12,8 +14,9 @@ class NavigateRequest(BaseModel):
 
 class ExtractRequest(BaseModel):
     url: str = Field(..., min_length=1, max_length=2048, description="대상 URL")
-    mode: str = Field("text", description="추출 모드: text | css | table | auto")
-    selector: str | None = Field(None, max_length=500, description="CSS 셀렉터 (css 모드에서 사용)")
+    mode: str = Field("css", description="추출 모드: css | structured | json | html")
+    selector: str | None = Field(None, max_length=500, description="CSS 셀렉터")
+    fields: dict[str, str] | None = Field(None, description="structured 모드의 필드 매핑")
 
 
 class SnapshotRequest(BaseModel):
@@ -32,9 +35,14 @@ class PolicyCheckRequest(BaseModel):
 class NavigateResponse(BaseModel):
     success: bool
     url: str
+    final_url: str = ""
     title: str = ""
     page_type: str = ""
     status: str = ""
+    status_code: int = 0
+    redirect_count: int = 0
+    dom_ready: bool = False
+    scripts_executed: int = 0
     error: str | None = None
 
 
@@ -42,7 +50,7 @@ class ExtractResponse(BaseModel):
     success: bool
     url: str
     mode: str = ""
-    data: object = None
+    data: Any = None
     count: int = 0
     error: str | None = None
 
@@ -52,9 +60,11 @@ class SnapshotResponse(BaseModel):
     url: str
     title: str = ""
     page_type: str = ""
-    primary_actions: list[str] = []
-    inputs: list[str] = []
-    semantic_tree: str = ""
+    snapshot_id: str = ""
+    primary_actions: list[Any] = []
+    inputs: list[Any] = []
+    blocking_elements: list[Any] = []
+    semantic_tree: Any = None
     error: str | None = None
 
 
@@ -64,4 +74,5 @@ class PolicyCheckResponse(BaseModel):
     policy: str = ""
     allowed: bool = False
     reason: str = ""
+    violation_type: str | None = None
     error: str | None = None

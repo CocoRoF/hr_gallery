@@ -415,8 +415,9 @@ export interface AnwebNavigateParams {
 
 export interface AnwebExtractParams {
   url: string;
-  mode: "text" | "css" | "table" | "auto";
+  mode: "css" | "structured" | "json" | "html";
   selector?: string;
+  fields?: Record<string, string>;
 }
 
 export interface AnwebSnapshotParams {
@@ -432,9 +433,14 @@ export interface AnwebPolicyCheckParams {
 export interface AnwebNavigateResponse {
   success: boolean;
   url: string;
+  final_url: string;
   title: string;
   page_type: string;
   status: string;
+  status_code: number;
+  redirect_count: number;
+  dom_ready: boolean;
+  scripts_executed: number;
   error: string | null;
 }
 
@@ -452,9 +458,11 @@ export interface AnwebSnapshotResponse {
   url: string;
   title: string;
   page_type: string;
-  primary_actions: string[];
-  inputs: string[];
-  semantic_tree: string;
+  snapshot_id: string;
+  primary_actions: any[];
+  inputs: any[];
+  blocking_elements: any[];
+  semantic_tree: any;
   error: string | null;
 }
 
@@ -464,6 +472,7 @@ export interface AnwebPolicyCheckResponse {
   policy: string;
   allowed: boolean;
   reason: string;
+  violation_type: string | null;
   error: string | null;
 }
 

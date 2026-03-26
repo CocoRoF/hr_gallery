@@ -45,7 +45,7 @@ const FEATURES: FeatureItem[] = [
     icon: <Eye size={20} />,
     title: "데이터 추출",
     description:
-      "CSS 셀렉터, 텍스트, 테이블, 자동 모드 — 4가지 방식으로 웹 페이지에서 구조화된 데이터를 추출합니다.",
+      "CSS 셀렉터, Structured, JSON, HTML — 4가지 모드로 웹 페이지에서 구조화된 데이터를 추출합니다.",
   },
   {
     icon: <Cookie size={20} />,
@@ -100,10 +100,14 @@ result = await session.act({
     }
 })
 
-# 텍스트 전체 추출
+# Structured 모드 — 필드 매핑
 result = await session.act({
     "tool": "extract",
-    "query": {"mode": "text"}
+    "query": {
+        "mode": "structured",
+        "selector": "div.item",
+        "fields": {"title": "h2", "price": ".price"}
+    }
 })`,
   },
   {

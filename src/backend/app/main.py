@@ -137,8 +137,8 @@ async def libraries():
             },
             {
                 "name": "an-web",
-                "version": _get_version("an-web") or "0.2.1",
-                "description": "AI-Native Web Browser Engine — semantic-first headless browser for AI agents.",
+                "version": _get_version("an-web") or "0.4.1",
+                "description": "AI-Native Web Browser Engine — semantic-first headless browser for AI agents with 11 tools, policy engine, and replay.",
                 "tagline": "AI-Native Web Browser Engine",
                 "language": "Python",
                 "license": "Apache-2.0",

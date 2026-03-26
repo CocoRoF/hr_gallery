@@ -36,10 +36,10 @@ const SAMPLE_URLS = [
 ];
 
 const EXTRACT_MODES = [
-  { id: "text", name: "Text", desc: "전체 텍스트 추출" },
   { id: "css", name: "CSS", desc: "CSS 셀렉터로 추출" },
-  { id: "table", name: "Table", desc: "테이블 데이터 추출" },
-  { id: "auto", name: "Auto", desc: "자동 감지" },
+  { id: "structured", name: "Structured", desc: "필드 매핑 추출" },
+  { id: "json", name: "JSON", desc: "임베디드 JSON 추출" },
+  { id: "html", name: "HTML", desc: "원본 HTML 추출" },
 ] as const;
 
 const POLICY_TYPES = [
@@ -78,8 +78,9 @@ export default function AnWebDemoPage() {
 
   // Extract state
   const [extUrl, setExtUrl] = useState("https://example.com");
-  const [extMode, setExtMode] = useState<string>("text");
+  const [extMode, setExtMode] = useState<string>("css");
   const [extSelector, setExtSelector] = useState("h1, h2, h3");
+  const [extFields, setExtFields] = useState("title:h2, price:.price");
   const [extResult, setExtResult] = useState<AnwebExtractResponse | null>(null);
   const [extLoading, setExtLoading] = useState(false);
   const [extError, setExtError] = useState<string | null>(null);
@@ -131,10 +132,20 @@ export default function AnWebDemoPage() {
     setExtError(null);
     setExtResult(null);
     try {
+      let fields: Record<string, string> | undefined;
+      if (extMode === "structured" && extFields) {
+        fields = Object.fromEntries(
+          extFields.split(",").map((f) => {
+            const [k, ...rest] = f.split(":");
+            return [k.trim(), rest.join(":").trim()];
+          })
+        );
+      }
       const res = await anwebExtract({
         url: extUrl,
         mode: extMode as any,
-        selector: extMode === "css" ? extSelector : undefined,
+        selector: extSelector || undefined,
+        fields,
       });
       setExtResult(res);
     } catch (e: any) {
@@ -196,6 +207,28 @@ async with ANWebEngine() as engine:
     })
     print(result)`;
         }
+        if (extMode === "structured") {
+          const fieldsObj = Object.fromEntries(
+            extFields.split(",").map((f) => {
+              const [k, v] = f.split(":").map((s) => s.trim());
+              return [k, v];
+            })
+          );
+          return `from an_web import ANWebEngine
+
+async with ANWebEngine() as engine:
+    session = await engine.create_session()
+    await session.navigate("${extUrl}")
+    result = await session.act({
+        "tool": "extract",
+        "query": {
+            "mode": "structured",
+            "selector": "${extSelector}",
+            "fields": ${JSON.stringify(fieldsObj, null, 12).replace(/\n/g, "\n            ")}
+        }
+    })
+    print(result)`;
+        }
         return `from an_web import ANWebEngine
 
 async with ANWebEngine() as engine:
@@ -203,7 +236,7 @@ async with ANWebEngine() as engine:
     await session.navigate("${extUrl}")
     result = await session.act({
         "tool": "extract",
-        "query": {"mode": "${extMode}"}
+        "query": {"mode": "${extMode}", "selector": "${extSelector}"}
     })
     print(result)`;
       case "policy":
@@ -415,6 +448,50 @@ print(f"Reason: {result.reason}")`;
                 </div>
               )}
 
+              {extMode === "structured" && (
+                <>
+                  <div>
+                    <label className="text-xs text-text-muted block mb-1.5">컨테이너 셀렉터</label>
+                    <input
+                      type="text"
+                      value={extSelector}
+                      onChange={(e) => setExtSelector(e.target.value)}
+                      className="input-field font-mono text-sm"
+                      placeholder="div.item"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs text-text-muted block mb-1.5">
+                      필드 매핑 <span className="text-text-muted">(name:selector, ...)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={extFields}
+                      onChange={(e) => setExtFields(e.target.value)}
+                      className="input-field font-mono text-sm"
+                      placeholder="title:h2, price:.price"
+                    />
+                  </div>
+                </>
+              )}
+
+              {(extMode === "json" || extMode === "html") && (
+                <div>
+                  <label className="text-xs text-text-muted block mb-1.5">셀렉터</label>
+                  <input
+                    type="text"
+                    value={extSelector}
+                    onChange={(e) => setExtSelector(e.target.value)}
+                    className="input-field font-mono text-sm"
+                    placeholder={
+                      extMode === "json"
+                        ? "script[type='application/json']"
+                        : "main, body"
+                    }
+                  />
+                </div>
+              )}
+
               <button
                 onClick={handleExtract}
                 disabled={extLoading || !extUrl}
@@ -539,9 +616,28 @@ print(f"Reason: {result.reason}")`;
                 <div className="space-y-3">
                   <StatusBadge success={navResult.success} />
                   <InfoRow label="URL" value={navResult.url} />
+                  {navResult.final_url && navResult.final_url !== navResult.url && (
+                    <InfoRow label="Final URL" value={navResult.final_url} />
+                  )}
                   <InfoRow label="Title" value={navResult.title} />
                   <InfoRow label="Page Type" value={navResult.page_type} />
                   <InfoRow label="Status" value={navResult.status} />
+                  {navResult.status_code > 0 && (
+                    <InfoRow label="HTTP Status" value={String(navResult.status_code)} />
+                  )}
+                  {navResult.redirect_count > 0 && (
+                    <InfoRow label="Redirects" value={String(navResult.redirect_count)} />
+                  )}
+                  <div className="flex gap-3">
+                    {navResult.dom_ready && (
+                      <span className="badge bg-green-500/10 text-green-400 border border-green-500/20 text-[10px]">DOM Ready</span>
+                    )}
+                    {navResult.scripts_executed > 0 && (
+                      <span className="badge bg-anweb/10 text-anweb-light border border-anweb/20 text-[10px]">
+                        {navResult.scripts_executed} scripts
+                      </span>
+                    )}
+                  </div>
                 </div>
               )}
               {!navLoading && !navError && !navResult && <EmptyState />}
@@ -568,23 +664,36 @@ print(f"Reason: {result.reason}")`;
                   <StatusBadge success={snapResult.success} />
                   <InfoRow label="Title" value={snapResult.title} />
                   <InfoRow label="Page Type" value={snapResult.page_type} />
+                  {snapResult.snapshot_id && (
+                    <InfoRow label="Snapshot ID" value={snapResult.snapshot_id} />
+                  )}
                   {snapResult.primary_actions?.length > 0 && (
                     <div>
-                      <span className="text-xs text-text-muted">Primary Actions</span>
-                      <div className="mt-1 flex flex-wrap gap-1.5">
-                        {snapResult.primary_actions.map((a, i) => (
-                          <span key={i} className="badge-anweb text-[10px]">{a}</span>
-                        ))}
+                      <span className="text-xs text-text-muted">Primary Actions ({snapResult.primary_actions.length})</span>
+                      <div className="mt-1 code-block text-xs max-h-40 overflow-y-auto">
+                        <pre className="whitespace-pre-wrap">
+                          {JSON.stringify(snapResult.primary_actions, null, 2)}
+                        </pre>
                       </div>
                     </div>
                   )}
                   {snapResult.inputs?.length > 0 && (
                     <div>
-                      <span className="text-xs text-text-muted">Inputs</span>
-                      <div className="mt-1 flex flex-wrap gap-1.5">
-                        {snapResult.inputs.map((inp, i) => (
-                          <span key={i} className="badge bg-bg-secondary text-text-secondary border border-border text-[10px]">{inp}</span>
-                        ))}
+                      <span className="text-xs text-text-muted">Inputs ({snapResult.inputs.length})</span>
+                      <div className="mt-1 code-block text-xs max-h-40 overflow-y-auto">
+                        <pre className="whitespace-pre-wrap">
+                          {JSON.stringify(snapResult.inputs, null, 2)}
+                        </pre>
+                      </div>
+                    </div>
+                  )}
+                  {snapResult.blocking_elements?.length > 0 && (
+                    <div>
+                      <span className="text-xs text-text-muted">Blocking Elements</span>
+                      <div className="mt-1 code-block text-xs max-h-32 overflow-y-auto">
+                        <pre className="whitespace-pre-wrap">
+                          {JSON.stringify(snapResult.blocking_elements, null, 2)}
+                        </pre>
                       </div>
                     </div>
                   )}
@@ -592,7 +701,11 @@ print(f"Reason: {result.reason}")`;
                     <div>
                       <span className="text-xs text-text-muted">Semantic Tree</span>
                       <div className="mt-1 code-block text-xs max-h-64 overflow-y-auto">
-                        <pre className="whitespace-pre-wrap">{snapResult.semantic_tree}</pre>
+                        <pre className="whitespace-pre-wrap">
+                          {typeof snapResult.semantic_tree === "string"
+                            ? snapResult.semantic_tree
+                            : JSON.stringify(snapResult.semantic_tree, null, 2)}
+                        </pre>
                       </div>
                     </div>
                   )}
@@ -665,6 +778,9 @@ print(f"Reason: {result.reason}")`;
                     </span>
                   </div>
                   <InfoRow label="Reason" value={polResult.reason} />
+                  {polResult.violation_type && (
+                    <InfoRow label="Violation Type" value={polResult.violation_type} />
+                  )}
                 </div>
               )}
               {!polLoading && !polError && !polResult && <EmptyState />}
