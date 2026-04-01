@@ -8,7 +8,7 @@ pydantic-settings>=2.12.0
 # ─── Libraries ───
 googer==0.7.3
 f2a==1.1.0
-contextifier==0.2.4
+contextifier==0.2.5
 an-web==0.4.2
 
 # ─── f2a optional deps ───
