@@ -1,28 +1,35 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  // 클래스 기반 다크 모드 — <html className="dark"> 일 때 .dark 변형 활성
+  darkMode: "class",
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
   theme: {
     extend: {
       colors: {
-        /* ── Match hr_blog2.0 design tokens ── */
-        "bg-primary": "#06060e",
-        "bg-secondary": "#0d0d1a",
-        "bg-card": "#111128",
-        "bg-card-hover": "#16163a",
-        border: "#1e1e3a",
-        "border-hover": "#2d2d5e",
-        "text-primary": "#e8e8f0",
-        "text-secondary": "#8888aa",
-        "text-muted": "#555577",
+        /* ── 디자인 토큰 — CSS 변수 (RGB triplet) 로 추상화.
+              실제 값은 globals.css 의 :root (light) / .dark (dark) 에 정의됨.
+              hr_blog2.0 과 동일 토큰 이름을 유지해 시각적 일치성 보장.
+
+              <alpha-value> 패턴: bg-bg-primary/50 같은 alpha 변형이
+              Tailwind v3 에서 자동 동작하도록 함. ── */
+        "bg-primary": "rgb(var(--color-bg-primary) / <alpha-value>)",
+        "bg-secondary": "rgb(var(--color-bg-secondary) / <alpha-value>)",
+        "bg-card": "rgb(var(--color-bg-card) / <alpha-value>)",
+        "bg-card-hover": "rgb(var(--color-bg-card-hover) / <alpha-value>)",
+        border: "rgb(var(--color-border) / <alpha-value>)",
+        "border-hover": "rgb(var(--color-border-hover) / <alpha-value>)",
+        "text-primary": "rgb(var(--color-text-primary) / <alpha-value>)",
+        "text-secondary": "rgb(var(--color-text-secondary) / <alpha-value>)",
+        "text-muted": "rgb(var(--color-text-muted) / <alpha-value>)",
         accent: {
-          DEFAULT: "#6366f1",
-          light: "#818cf8",
-          cyan: "#22d3ee",
-          violet: "#a855f7",
+          DEFAULT: "rgb(var(--color-accent) / <alpha-value>)",
+          light: "rgb(var(--color-accent-light) / <alpha-value>)",
+          cyan: "rgb(var(--color-accent-cyan) / <alpha-value>)",
+          violet: "rgb(var(--color-accent-violet) / <alpha-value>)",
         },
-        glow: "rgba(99, 102, 241, 0.15)",
-        /* ── Library brand colors ── */
+        glow: "var(--color-glow)",
+        /* ── Library brand colors — 테마와 무관, 고정 hex ── */
         googer: {
           DEFAULT: "#f97316",
           dark: "#ea580c",

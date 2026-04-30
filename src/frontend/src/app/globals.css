@@ -4,24 +4,86 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
 
-/* ── Custom Scrollbar (matching hr_blog2.0) ── */
+/* ═══════════════════════════════════════════════════════════════
+   디자인 토큰 — hr_blog2.0 과 완전히 동일한 light/dark 팔레트.
+   서브도메인 간 시각적 동일성을 위해 색·이름 모두 일치시킴.
+
+   토큰의 실제 값은 :root (light 기본) 와 .dark (dark 오버라이드) 에 정의.
+   tailwind.config.ts 가 var(--color-*) 를 utility 로 매핑하므로
+   <div class="bg-bg-primary"> 하나로 두 모드 자동 전환.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* CSS 변수는 RGB triplet (공백 구분) — Tailwind v3 의 <alpha-value> 패턴 동작용.
+   사용 예: bg-accent/25 →  rgb(var(--color-accent) / 0.25) */
+
+:root {
+  color-scheme: light;
+
+  /* Light 팔레트 — hr_blog2.0 globals.css 와 1:1 일치 (RGB triplet) */
+  --color-bg-primary: 250 250 252;       /* #fafafc */
+  --color-bg-secondary: 241 241 247;     /* #f1f1f7 */
+  --color-bg-card: 255 255 255;          /* #ffffff */
+  --color-bg-card-hover: 246 246 251;    /* #f6f6fb */
+  --color-border: 228 228 236;           /* #e4e4ec */
+  --color-border-hover: 205 205 224;     /* #cdcde0 */
+  --color-text-primary: 14 14 26;        /* #0e0e1a */
+  --color-text-secondary: 85 85 112;     /* #555570 */
+  --color-text-muted: 136 139 168;       /* #888ba8 */
+  --color-accent: 82 86 232;             /* #5256e8 */
+  --color-accent-light: 99 102 241;      /* #6366f1 */
+  --color-accent-cyan: 8 145 178;        /* #0891b2 */
+  --color-accent-violet: 147 51 234;     /* #9333ea */
+  --color-glow: rgba(82, 86, 232, 0.18);
+
+  /* 보조 변수 */
+  --scrollbar-thumb: rgba(120, 122, 160, 0.35);
+  --scrollbar-thumb-hover: rgba(82, 86, 232, 0.6);
+  --selection-bg: rgba(82, 86, 232, 0.22);
+}
+
+.dark {
+  color-scheme: dark;
+
+  /* Dark 팔레트 — 기존 hr_blog2.0 dark 와 일치 */
+  --color-bg-primary: 6 6 14;            /* #06060e */
+  --color-bg-secondary: 13 13 26;        /* #0d0d1a */
+  --color-bg-card: 17 17 40;             /* #111128 */
+  --color-bg-card-hover: 22 22 58;       /* #16163a */
+  --color-border: 42 42 80;              /* #2a2a50 */
+  --color-border-hover: 61 61 112;       /* #3d3d70 */
+  --color-text-primary: 232 232 240;     /* #e8e8f0 */
+  --color-text-secondary: 153 153 187;   /* #9999bb */
+  --color-text-muted: 112 112 160;       /* #7070a0 */
+  --color-accent: 99 102 241;            /* #6366f1 */
+  --color-accent-light: 129 140 248;     /* #818cf8 */
+  --color-accent-cyan: 34 211 238;       /* #22d3ee */
+  --color-accent-violet: 168 85 247;     /* #a855f7 */
+  --color-glow: rgba(99, 102, 241, 0.15);
+
+  --scrollbar-thumb: rgba(85, 85, 119, 0.35);
+  --scrollbar-thumb-hover: rgba(99, 102, 241, 0.5);
+  --selection-bg: rgba(99, 102, 241, 0.3);
+}
+
+/* ── Custom Scrollbar (변수 기반으로 자동 cascade) ── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgba(85, 85, 119, 0.35) transparent;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(85, 85, 119, 0.35); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.5); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
 ::-webkit-scrollbar-corner { background: transparent; }
 
 @layer base {
   body {
     @apply bg-bg-primary text-text-primary font-sans antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   ::selection {
-    @apply bg-accent/30;
+    background: var(--selection-bg);
   }
 }
 

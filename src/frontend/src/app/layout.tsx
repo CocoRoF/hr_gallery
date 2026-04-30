@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { getThemeBootstrapScript } from "@/lib/theme";
 
 export const metadata: Metadata = {
   title: {
@@ -23,8 +24,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className="dark">
+    // 초기 className="dark" 는 SSR 안전한 기본값. inline script 가 cookie/OS
+    // 선호를 읽어 light 면 paint 직전에 className 을 light 로 즉시 조정.
+    // suppressHydrationWarning: 클라이언트가 className 을 변형해도 React 무경고.
+    <html lang="ko" className="dark" suppressHydrationWarning>
       <head>
+        {/* FOUC 방지: paint-blocking inline script.
+            Domain=.hrletsgo.me cookie 로 hr_blog2.0 와 양방향 동기화. */}
+        <script
+          // eslint-disable-next-line react/no-danger
+          dangerouslySetInnerHTML={{ __html: getThemeBootstrapScript() }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
