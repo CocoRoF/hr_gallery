@@ -53,7 +53,9 @@ services:
     container_name: hr_gallery_nginx
     restart: unless-stopped
     ports:
-      - "58443:80"
+      # 58443 is taken by hr_blog2.0's nginx on the hr106 host —
+      # cloudflared routes gallery.hrletsgo.me to this port.
+      - "58900:80"
     depends_on:
       - backend
       - frontend
