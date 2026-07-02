@@ -184,7 +184,7 @@ async def policy_check(req: PolicyCheckRequest):
             url=req.url,
             policy=req.policy,
             allowed=result.allowed,
-            reason=result.reason,
+            reason=result.reason or "",
             violation_type=getattr(result, "violation_type", None),
         )
     except Exception as e:
