@@ -1,4 +1,4 @@
-"""an-web browser engine API router — v0.4.1."""
+"""an-web browser engine API router — v0.6.0."""
 
 import logging
 
