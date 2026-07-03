@@ -137,8 +137,8 @@ async def libraries():
             },
             {
                 "name": "an-web",
-                "version": _get_version("an-web") or "0.4.1",
-                "description": "AI-Native Web Browser Engine — semantic-first headless browser for AI agents with 11 tools, policy engine, and replay.",
+                "version": _get_version("an-web") or "0.8.0",
+                "description": "AI-Native Web Browser Engine — semantic-first headless browser for AI agents with 13 tools, real fetch/XHR bridge, policy engine, and replay.",
                 "tagline": "AI-Native Web Browser Engine",
                 "language": "Python",
                 "license": "Apache-2.0",
@@ -147,7 +147,7 @@ async def libraries():
                 "color": "blue",
                 "features": [
                     "semantic_extraction",
-                    "11_ai_tools",
+                    "13_ai_tools",
                     "policy_engine",
                     "cookie_storage",
                     "replay_engine",

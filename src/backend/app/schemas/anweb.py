@@ -1,4 +1,4 @@
-"""Pydantic schemas for an-web API — v0.4.1."""
+"""Pydantic schemas for an-web API — v0.8.0."""
 
 from typing import Any
 

@@ -106,7 +106,7 @@ async with playleft.Browser() as browser:
   },
   {
     name: "an-web",
-    version: "0.4.1",
+    version: "0.8.0",
     tagline: "AI-Native Web Browser Engine",
     description:
       "AI 에이전트를 위한 시맨틱 우선 헤드리스 브라우저 엔진. 픽셀 렌더링 없이 웹 페이지를 구조화된 데이터로 변환합니다.",
@@ -118,7 +118,7 @@ async with playleft.Browser() as browser:
     pypi: "https://pypi.org/project/an-web/",
     demoPath: "/an-web",
     hasDemo: true,
-    features: ["시맨틱 추출", "11개 AI 도구", "정책 엔진", "쿠키/스토리지", "리플레이 엔진"],
+    features: ["시맨틱 추출", "13개 AI 도구", "fetch/네트워크 브리지", "정책 엔진", "리플레이 엔진"],
     code: `from an_web import ANWebEngine
 
 async with ANWebEngine() as engine:

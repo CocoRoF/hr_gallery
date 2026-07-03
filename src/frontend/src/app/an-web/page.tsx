@@ -31,9 +31,9 @@ const FEATURES: FeatureItem[] = [
   },
   {
     icon: <Workflow size={20} />,
-    title: "11개 AI 도구",
+    title: "13개 AI 도구",
     description:
-      "navigate, snapshot, click, type, select, extract, scroll, wait_for, eval_js 등 11개 도구를 제공합니다.",
+      "navigate, snapshot, click, type, extract, eval_js에 더해 fetch·network 데이터 플레인까지 13개 도구를 제공합니다.",
   },
   {
     icon: <Shield size={20} />,
@@ -168,7 +168,7 @@ export default function AnWebPage() {
 
       {/* ─── AI Tools ─── */}
       <SectionWrapper>
-        <h2 className="section-title text-center">11개 AI 도구</h2>
+        <h2 className="section-title text-center">13개 AI 도구</h2>
         <p className="section-subtitle text-center mx-auto">
           Claude, GPT 등 LLM의 도구 호출 형식과 완벽하게 호환됩니다.
         </p>
@@ -222,7 +222,7 @@ export default function AnWebPage() {
           {[
             { name: "core", desc: "엔진, 세션", icon: <Cpu size={16} /> },
             { name: "dom", desc: "HTML 파서", icon: <Globe size={16} /> },
-            { name: "actions", desc: "11개 도구", icon: <Workflow size={16} /> },
+            { name: "actions", desc: "13개 도구", icon: <Workflow size={16} /> },
             { name: "semantic", desc: "페이지 분석", icon: <Brain size={16} /> },
             { name: "policy", desc: "보안 정책", icon: <Shield size={16} /> },
           ].map((mod) => (
